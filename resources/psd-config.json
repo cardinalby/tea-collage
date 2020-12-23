@@ -1,0 +1,8 @@
+{
+  "psdFile": "teas.psd",
+  "layers": {
+    "background": "Background",
+    "overlayGroup": "overlay"
+  },
+  "targetWidth": 1200
+}

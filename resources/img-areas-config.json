@@ -1,0 +1,50 @@
+{
+  "gu-shu-shu-cha": {
+    "fillColor": "rgba(0, 40, 10, 0.1)",
+    "strokeColor": "#ffe373"
+  },
+  "shen_ajaloshan_shen_cha": {
+    "fillColor": "rgba(40, 40, 0, 0.2)",
+    "strokeColor": "#2ebf11"
+  },
+  "shu-pujer-da-shi-cha": {
+    "fillColor": "rgba(70, 70, 70, 0.2)",
+    "strokeColor": "#b90000"
+  },
+  "shu_ailaoshan_leo": {
+    "fillColor": "rgba(0, 0, 0, 0.2)",
+    "strokeColor": "black"
+  },
+  "shu_bulan_cha_huan": {
+    "fillColor": "rgba(50, 0, 0, 0.2)",
+    "strokeColor": "black"
+  },
+  "shu_cha_dao_shi": {
+    "fillColor": "rgba(0, 0, 0, 0.2)",
+    "strokeColor": "#ffe373"
+  },
+  "shu_dai_czhu_shu_cha": {
+    "fillColor": "rgba(0, 30, 30, 0.2)",
+    "strokeColor": "#73c2ff"
+  },
+  "shu_hatnik": {
+    "fillColor": "rgba(0, 0, 0, 0.2)",
+    "strokeColor": "black"
+  },
+  "shu_huanshan_mountain": {
+    "fillColor": "rgba(0, 0, 0, 0.2)",
+    "strokeColor": "black"
+  },
+  "shu_lincan": {
+    "fillColor": "rgba(0, 0, 0, 0.2)",
+    "strokeColor": "black"
+  },
+  "shu_shi_hao_shu_cha_10": {
+    "fillColor": "rgba(0, 0, 0, 0.2)",
+    "strokeColor": "black"
+  },
+  "shu_zoloto_menhaya": {
+    "fillColor": "rgba(255, 255, 255, 0.2)",
+    "strokeColor": "black"
+  }
+}

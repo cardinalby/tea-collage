@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+
+.collage-container {
+  margin: auto;
+  justify-content: center;
+  width: 95%;
+  height: 95vh;
+}
+
+.collage-overlay {
+  position: absolute;
+  z-index: 100;
+}
+
+.collage-overlay img {
+  filter: drop-shadow(2px 2px 0 black)
+          drop-shadow(-2px 2px 0 black)
+          drop-shadow(2px -2px 0 black)
+          drop-shadow(-2px -2px 0 black);
+}
