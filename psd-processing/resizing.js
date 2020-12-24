@@ -1,7 +1,7 @@
 const sharp = require('sharp');
 const os = require('os');
 
-async function resizeFile(srcFilePath, targetFilePath, factor) {
+async function resizeFile(srcFilePath, targetFilePath, factor, toJpeg) {
     const img = sharp(srcFilePath);
     const metadata = await img.metadata();
     const newSize = {
@@ -10,8 +10,15 @@ async function resizeFile(srcFilePath, targetFilePath, factor) {
     };
 
     process.stdout.write(`Resizing ${srcFilePath}...`);
+
+    img.resize(newSize)
+    if (toJpeg) {
+        img
+            .toFormat('jpeg')
+            .jpeg({ quality: 100, progressive: true});
+    }
+
     return img
-        .resize(newSize)
         .toFile(targetFilePath)
         .then(() => process.stdout.write('done' + os.EOL));
 }

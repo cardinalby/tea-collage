@@ -28,8 +28,10 @@ async function prepareImagesDir(dirPath) {
     const resizeFactor = psdConfig.targetWidth / psdResult.width;
     await resizing.resizeFile(
         path.join(consts.EXTRACTED_DIR, consts.BACKGROUND_FILE),
-        path.join(consts.RESIZED_DIR, consts.BACKGROUND_FILE),
-        resizeFactor);
+        path.join(consts.RESIZED_DIR, consts.BACKGROUND_FILE_JPG),
+        resizeFactor,
+        true
+    );
 
     for (const layer of psdResult.layers) {
         await resizing.resizeFile(

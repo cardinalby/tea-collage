@@ -23,5 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 /.eslintcache
 /public/resized/
-/public/extracted/
+/tmp
 /src/collage-info.json

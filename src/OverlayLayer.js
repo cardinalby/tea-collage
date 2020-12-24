@@ -1,34 +1,43 @@
-import React, {useState} from 'react';
-
-function isTransparentPoint(ctx, x, y) {
-    return ctx.getImageData(x, y, 1, 1).data[3] === 0;
-}
+import React from 'react';
 
 function OverlayLayer(props) {
-    const img = new Image();
-    img.src = props.src;
-    img.onload = () => {
-        if (!canvas) {
-            return;
-        }
-        const width = img.width;
-        const height = img.height;
-
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(
-            img,
-            props.left * props.resizeRatio,
-            props.top * props.resizeRatio,
-            width * props.resizeRatio,
-            height * props.resizeRatio
-        );
+    let ctx = null;
+    const onImageLoad = (event) => {
+        const img = event.target;
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, img.width, img.height);
     };
 
-    const [canvas, setCanvas] = useState(null);
+    const isTransparentPoint = event => {
+        if (ctx) {
+            const rect = event.target.getBoundingClientRect();
+            const x = (event.clientX - rect.left) / props.scale;
+            const y = (event.clientY - rect.top) / props.scale;
+            return ctx.getImageData(x, y, 1, 1).data[3] === 0;
+        }
+        return false;
+    }
 
     const onMouseMove = event => {
-        console.log(isTransparentPoint(canvas.getContext('2d'), event.clientX, event.clientY));
+        if (props.onFilledAreaLeave && isTransparentPoint(event)) {
+            props.onFilledAreaLeave();
+        }
     };
+    const onMouseLeave = () => {
+        props.onFilledAreaLeave && props.onFilledAreaLeave();
+    }
+    const onMouseClick = event => {
+        if (props.onFilledAreaLeave || props.onFilledAreaClick) {
+            if (isTransparentPoint(event)) {
+                props.onFilledAreaLeave && props.onFilledAreaLeave();
+            } else {
+                props.onFilledAreaClick && props.onFilledAreaClick();
+            }
+        }
+    }
 
     return (
         <div
@@ -38,15 +47,18 @@ function OverlayLayer(props) {
                 top: 0,
             }}
         >
-            <canvas
+            <img
                 style={{
-                    width: props.width + 'px',
-                    height: props.height + 'px',
+                    left: props.left * props.scale,
+                    top: props.top * props.scale,
+                    transform: `scale(${props.scale})`
                 }}
-                width={props.width}
-                height={props.height}
-                ref={node => setCanvas(node)}
+                src={props.src}
+                alt={'overlay'}
                 onMouseMove={onMouseMove}
+                onMouseLeave={onMouseLeave}
+                onClick={onMouseClick}
+                onLoad={onImageLoad}
             />
         </div>
     );

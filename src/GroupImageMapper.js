@@ -14,10 +14,20 @@ export default class GroupImageMapper extends ImageMapper {
                 addGroupArea(area.group, area);
             }
         }
+
+        this.selectedArea = null;
+    }
+
+    mouseMove(area, index, event) {
+        super.mouseMove(area, index, event);
+        if (!this.selectedArea) {
+            this.hoverOn(area, index, event);
+        }
     }
 
     hoverOn(area, index, event) {
         if (this.props.active) {
+            this.selectedArea = area;
             const groupAreas = this.groups.get(area.group);
             for (const groupArea of groupAreas) {
                 const drawMethod = "draw" + groupArea.shape;
@@ -34,6 +44,13 @@ export default class GroupImageMapper extends ImageMapper {
 
         if (this.props.onMouseEnter) {
             this.props.onMouseEnter(area, index, event);
+        }
+    }
+
+    hoverOff(area, index, event) {
+        super.hoverOff(area, index, event);
+        if (this.props.active) {
+            this.selectedArea = null;
         }
     }
 }

@@ -26,8 +26,7 @@ function calculateImgSize(parentWidth, parentHeight, imgWidth, imgHeight) {
 function ResizeableImageMapper(props) {
     const [parentWidth, parentHeight] = useElementSize(props.fitToElement);
     const size = calculateImgSize(parentWidth, parentHeight, props.imgWidth, props.imgHeight);
-    const resizeRatio = size.width / props.imgWidth;
-    console.log(resizeRatio);
+    const scale = size.width / props.imgWidth;
 
     let overlayLayer = '';
     if (props.overlayLayerInfo) {
@@ -39,7 +38,9 @@ function ResizeableImageMapper(props) {
                 left={props.overlayLayerInfo.left}
                 width={size.width}
                 height={size.height}
-                resizeRatio={resizeRatio}
+                scale={scale}
+                onFilledAreaLeave={() => props.onOverlayLeave && props.onOverlayLeave()}
+                onFilledAreaClick={() => props.onOverlayClick && props.onOverlayClick()}
             />
         );
     }

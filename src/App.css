@@ -50,6 +50,9 @@
 }
 
 .collage-overlay img {
+  transition: visibility 0s linear 2300ms, opacity 2300ms;
+  position: absolute;
+  transform-origin: top left;
   filter: drop-shadow(2px 2px 0 black)
           drop-shadow(-2px 2px 0 black)
           drop-shadow(2px -2px 0 black)

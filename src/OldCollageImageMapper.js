@@ -7,11 +7,15 @@ function OldCollageImageMapper(props) {
     const [containerRef, setContainerRef] = useState(null);
     const [overlayLayerInfo, setOverlayLayerInfo] = useState(null);
 
+    const onAreaClick = area => setOverlayLayerInfo(collageInfo.overlayItems[area.group]);
+    const onOverlayLeave = () => setOverlayLayerInfo(null);
+    const onOverlayClick = () => console.log(overlayLayerInfo);
+
     const imageMapper = containerRef
         ? <ResizeableImageMapper
             overlayLayerInfo={overlayLayerInfo}
             component={GroupImageMapper}
-            src={process.env.PUBLIC_URL + '/resized/background.png'}
+            src={process.env.PUBLIC_URL + '/resized/background.jpg'}
             fitToElement={containerRef}
             imgWidth={collageInfo.width}
             imgHeight={collageInfo.height}
@@ -19,7 +23,9 @@ function OldCollageImageMapper(props) {
             lineWidth={3}
             fillColor="rgba(0, 0, 0, 0.3)"
             map={collageInfo.imgAreasMap}
-            onClick={area => setOverlayLayerInfo(collageInfo.overlayItems[area.group])}
+            onClick={onAreaClick}
+            onOverlayLeave={onOverlayLeave}
+            onOverlayClick={onOverlayClick}
         />
         : '';
 
