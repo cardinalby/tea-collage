@@ -1,34 +1,45 @@
 const os = require('os');
 const PSD = require('psd');
+const path = require('path')
+const fs = require('fs-extra');
 const extractLayers = require('./extractLayers');
+const sanitizeFilename = require("sanitize-filename");
 
 /**
- * @property {LayerInfo[]} layers
+ * @property {LayerInfo[]} overlayLayers
+ * @property backgroundFileName
+ * @property overlayDirName
  * @property width
  * @property height
  */
 class PsdProcessingResult {
-    constructor(layers, width, height) {
-        this.layers = layers;
+    constructor(overlayLayers, backgroundFileName, overlayDirName, width, height) {
+        this.overlayLayers = overlayLayers;
+        this.backgroundFileName = backgroundFileName;
+        this.overlayDirName = overlayDirName;
         this.width = width;
         this.height = height;
+    }
+
+    copy() {
+        return new PsdProcessingResult(
+            this.overlayLayers.map(layer => layer.copy()),
+            this.backgroundFileName,
+            this.overlayDirName,
+            this.width,
+            this.height
+        );
     }
 }
 
 /**
- * @param psdFilePath
- * @param overlayGroupName
- * @param backgroundLayerName
- * @param outBackgroundFilePath
- * @param outOverlayDirPath
  * @returns {Promise<PsdProcessingResult>}
  */
 async function processPsd(
     psdFilePath,
+    extractionDir,
     overlayGroupName,
-    backgroundLayerName,
-    outBackgroundFilePath,
-    outOverlayDirPath
+    backgroundLayerName
 ) {
     const psd = PSD.fromFile(psdFilePath);
     psd.parse();
@@ -42,13 +53,25 @@ async function processPsd(
     if (backgroundLayer.length === 0 || backgroundLayer[0].type !== 'layer') {
         throw new Error(`${backgroundLayerName} layer not found`);
     }
+
+    const outBackgroundFileName = sanitizeFilename(backgroundLayer[0].name) + '.png';
+    const outBackgroundFilePath = path.join(extractionDir, outBackgroundFileName);
+
     process.stdout.write(`Extracting ${backgroundLayerName} layer to ${outBackgroundFilePath}...`);
     await backgroundLayer[0].layer.image.saveAsPng(outBackgroundFilePath);
     process.stdout.write('done' + os.EOL);
 
-    const layers = await extractLayers.extractFromGroup(overlayGroup[0], outOverlayDirPath)
+    const overlayGroupDir = sanitizeFilename(overlayGroup[0].name);
+    fs.ensureDir(path.join(extractionDir, overlayGroupDir));
+    const layers = await extractLayers.extractFromGroup(overlayGroup[0], extractionDir, overlayGroupDir);
 
-    return new PsdProcessingResult(layers, psd.image.width(), psd.image.height());
+    return new PsdProcessingResult(
+        layers,
+        outBackgroundFileName,
+        overlayGroupDir,
+        psd.image.width(),
+        psd.image.height()
+    );
 }
 
 module.exports = processPsd;

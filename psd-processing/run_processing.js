@@ -6,50 +6,74 @@ const resizing = require('./resizing');
 const fs = require('fs-extra');
 const path = require('path')
 const psdConfig = require('../resources/psd-config.json');
+const sanitizeFilename = require("sanitize-filename");
 
+/**
+ * @return {Promise<void>}
+ */
 async function prepareImagesDir(dirPath) {
-    if (await fs.exists(dirPath)) {
-        await fs.emptyDir(dirPath);
-    }
-    await fs.ensureDir(path.join(dirPath, consts.OVERLAY_DIR));
+    await fs.ensureDir(dirPath);
+    await fs.emptyDir(dirPath);
 }
 
 (async function() {
     await prepareImagesDir(consts.EXTRACTED_DIR);
     const psdResult = await processPsd(
         path.join(consts.RESOURCES_DIR, psdConfig.psdFile),
+        consts.EXTRACTED_DIR,
         psdConfig.layers.overlayGroup,
-        psdConfig.layers.background,
-        path.join(consts.EXTRACTED_DIR, consts.BACKGROUND_FILE),
-        path.join(consts.EXTRACTED_DIR, consts.OVERLAY_DIR)
+        psdConfig.layers.background
     );
 
-    await prepareImagesDir(consts.RESIZED_DIR);
-    const resizeFactor = psdConfig.targetWidth / psdResult.width;
-    await resizing.resizeFile(
-        path.join(consts.EXTRACTED_DIR, consts.BACKGROUND_FILE),
-        path.join(consts.RESIZED_DIR, consts.BACKGROUND_FILE_JPG),
-        resizeFactor,
-        true
-    );
+    await fs.ensureDir(consts.COLLAGE_INFO_DIR);
+    await fs.emptyDir(consts.COLLAGE_INFO_DIR);
+    for (const size of psdConfig.targetSizes) {
+        await prepareImagesDir(path.join(consts.RESIZED_DIR, size.name));
+        const scale = size.width / psdResult.width;
 
-    for (const layer of psdResult.layers) {
+        const destDir = path.join(consts.RESIZED_DIR, size.name);
+
+        const psdResultCopy = psdResult.copy();
+        psdResultCopy.backgroundFileName = sanitizeFilename(psdConfig.layers.background) + '.jpg';
         await resizing.resizeFile(
-            path.join(consts.EXTRACTED_DIR, consts.OVERLAY_DIR, layer.fileName),
-            path.join(consts.RESIZED_DIR, consts.OVERLAY_DIR, layer.fileName),
-            resizeFactor
-        )
+            path.join(consts.EXTRACTED_DIR, psdResult.backgroundFileName),
+            path.join(destDir, psdResultCopy.backgroundFileName),
+            size.preview ? scale * 1.7 : scale,
+            img => {
+                if (size.preview) {
+                    img.toColourspace('b-w')
+                    img.grayscale();
+                }
+                 img
+                     .toFormat('jpeg')
+                     .jpeg({quality: size.preview ? 60 : 100, progressive: true});
+            }
+        );
+
+        await fs.ensureDir(path.join(destDir, psdResultCopy.overlayDirName));
+        for (const layer of psdResultCopy.overlayLayers) {
+            await resizing.resizeFile(
+                path.join(consts.EXTRACTED_DIR, layer.fileName),
+                path.join(destDir, layer.fileName),
+                scale
+            )
+        }
+
+        const collageInfoFile = path.join(consts.COLLAGE_INFO_DIR, size.name + '.json');
+        process.stdout.write(`Preparing ${collageInfoFile}...`);
+
+        resizing.adjustPsdResult(psdResultCopy, scale);
+
+        const collage = size.preview
+            ? collageInfo.createPreview(psdResultCopy)
+            : collageInfo.create(psdResultCopy, consts.MAP_NAME)
+        await fs.writeJson(collageInfoFile, collage);
+        process.stdout.write('done' + os.EOL)
     }
     await fs.remove(consts.EXTRACTED_DIR);
-
-    process.stdout.write(`Preparing ${consts.COLLAGE_INFO_FILE}...`);
-
-    resizing.adjustPsdResult(psdResult, resizeFactor);
-
     await fs.writeJson(
-        consts.COLLAGE_INFO_FILE,
-        collageInfo.create(psdResult, consts.MAP_NAME)
+        path.join(consts.COLLAGE_INFO_DIR, consts.COLLAGE_INFO_SIZES_JSON),
+        psdConfig.targetSizes
     );
-    process.stdout.write('done' + os.EOL)
 })();
 

@@ -1,14 +1,12 @@
 const areasConfig = require('../resources/img-areas-config.json');
 
 /**
- * @property id
  * @property fileName
  * @property left
  * @property top
  */
 class CollageItem {
-    constructor(id, fileName, left, top) {
-        this.id = id;
+    constructor(fileName, left, top) {
         this.fileName = fileName;
         this.left = left;
         this.top = top;
@@ -28,14 +26,14 @@ class ImgArea {
         this.coords = coords;
         this.group = group;
     }
-}
 
-function updateAreaStyle(area, layerConfig) {
-    if (layerConfig.strokeColor) {
-        area.strokeColor = layerConfig.strokeColor;
-    }
-    if (layerConfig.fillColor) {
-        area.fillColor = layerConfig.fillColor;
+    static updateAreaStyle(area, layerConfig) {
+        if (layerConfig.strokeColor) {
+            area.strokeColor = layerConfig.strokeColor;
+        }
+        if (layerConfig.fillColor) {
+            area.fillColor = layerConfig.fillColor;
+        }
     }
 }
 
@@ -51,33 +49,44 @@ class ImgAreasMap {
 }
 
 /**
- * @property overlayItems
- * @property {ImgAreasMap} imgAreasMap
  * @property width
  * @property height
+ * @property fileName
  */
-class CollageInfo {
-    constructor(overlayItems, imgAreasMap, width, height) {
-        this.overlayItems = overlayItems;
-        this.imgAreasMap = imgAreasMap;
+class BackgroundInfo {
+    constructor(width, height, fileName) {
         this.width = width;
         this.height = height;
+        this.fileName = fileName;
+    }
+}
+
+/**
+ * @property {Object.<string, CollageItem>} overlayItems
+ * @property {BackgroundInfo} background
+ * @property {ImgAreasMap|undefined} imgAreasMap
+ */
+class CollageInfo {
+    constructor(overlayItems, background, imgAreasMap) {
+        this.overlayItems = overlayItems;
+        this.background = background;
+        this.imgAreasMap = imgAreasMap;
     }
 }
 
 /**
  * @param {PsdProcessingResult} psdProcessingResult
+ * @param {boolean} preview
  * @return {object}
  */
-function getOverlayItems(psdProcessingResult) {
-    return Object.fromEntries(psdProcessingResult.layers.map(layer =>
+function getOverlayItems(psdProcessingResult, preview) {
+    return Object.fromEntries(psdProcessingResult.overlayLayers.map(layer =>
         [
             layer.name,
             new CollageItem(
-                layer.name,
                 layer.fileName,
-                layer.left,
-                layer.top
+                preview ? undefined : layer.left,
+                preview ? undefined :layer.top
             )
         ]
     ));
@@ -90,30 +99,17 @@ function getOverlayItems(psdProcessingResult) {
  */
 function getImgAreasMap(psdProcessingResult, name) {
     const imgAreasMap = new ImgAreasMap(name, []);
-    for (const layer of psdProcessingResult.layers) {
+    for (const layer of psdProcessingResult.overlayLayers) {
         for (const subPath of layer.maskPath.subPathes) {
             const layerConfig = areasConfig[layer.name];
             const area = new ImgArea('poly', subPath.getImgMapCoords(), layer.name);
             if (layerConfig) {
-                updateAreaStyle(area, layerConfig);
+                ImgArea.updateAreaStyle(area, layerConfig);
             }
             imgAreasMap.areas.push(area);
         }
     }
     return imgAreasMap;
-}
-
-/**
- * @param {PsdProcessingResult} psdProcessingResult
- * @param name
- */
-function create(psdProcessingResult, name) {
-    return new CollageInfo(
-        getOverlayItems(psdProcessingResult),
-        getImgAreasMap(psdProcessingResult, name),
-        psdProcessingResult.width,
-        psdProcessingResult.height
-    );
 }
 
 /**
@@ -123,10 +119,38 @@ function updateImgAreas(collageInfo) {
     for (const area of collageInfo.imgAreasMap.areas) {
         const layerConfig = areasConfig[area.group];
         if (layerConfig) {
-            updateAreaStyle(area, layerConfig);
+            ImgArea.updateAreaStyle(area, layerConfig);
         }
     }
 }
 
-exports.create = create;
+/**
+ * @param {PsdProcessingResult} psdResult
+ * @param name
+ */
+function createCollageInfo(psdResult, name) {
+    return new CollageInfo(
+        getOverlayItems(psdResult, false),
+        new BackgroundInfo(
+            psdResult.width,
+            psdResult.height,
+            psdResult.backgroundFileName
+        ),
+        getImgAreasMap(psdResult, name)
+    );
+}
+
+function createPreviewInfo(psdResult) {
+    return new CollageInfo(
+        getOverlayItems(psdResult, true),
+        new BackgroundInfo(
+            psdResult.width,
+            psdResult.height,
+            psdResult.backgroundFileName
+        )
+    );
+}
+
+exports.create = createCollageInfo;
+exports.createPreview = createPreviewInfo;
 exports.updateImgAreas = updateImgAreas;

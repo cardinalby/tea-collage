@@ -1,6 +1,6 @@
 import React, {useLayoutEffect, useState} from "react";
-import GroupImageMapper from "./GroupImageMapper";
 import OverlayLayer from "./OverlayLayer";
+import ImageMapper from "./ImageMapper";
 
 function useElementSize(element) {
     const [size, setSize] = useState([element.clientWidth, element.clientHeight]);
@@ -23,19 +23,23 @@ function calculateImgSize(parentWidth, parentHeight, imgWidth, imgHeight) {
         : { width: parentWidth, height: Math.round(parentWidth / imgProportions) };
 }
 
+/**
+ * @param {CollageSources} props.collageSources
+ */
 function ResizeableImageMapper(props) {
     const [parentWidth, parentHeight] = useElementSize(props.fitToElement);
     const size = calculateImgSize(parentWidth, parentHeight, props.imgWidth, props.imgHeight);
     const scale = size.width / props.imgWidth;
 
-    let overlayLayer = '';
-    if (props.overlayLayerInfo) {
-        const imgUrl = process.env.PUBLIC_URL +`/resized/overlay/${props.overlayLayerInfo.fileName}`
-        overlayLayer = (
+    let overlay = '';
+    if (props.overlayLayerId) {
+        const imgUrl = props.collageSources.getOverlayUrl(props.overlayLayerId);
+        const overlayLayer = props.collageSources.getOverlayItem(props.overlayLayerId);
+        overlay = (
             <OverlayLayer
                 src={imgUrl}
-                top={props.overlayLayerInfo.top}
-                left={props.overlayLayerInfo.left}
+                top={overlayLayer.top}
+                left={overlayLayer.left}
                 width={size.width}
                 height={size.height}
                 scale={scale}
@@ -47,11 +51,11 @@ function ResizeableImageMapper(props) {
 
     return (
         <div style={{position: 'absolute'}}>
-            <GroupImageMapper
+            <ImageMapper
                 {...props}
                 {...size}
             />
-            {overlayLayer}
+            {overlay}
         </div>
     );
 }

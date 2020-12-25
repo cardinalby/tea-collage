@@ -1,4 +1,5 @@
-import './App.css';
+import '../css/app.css';
+import '../css/spinner.css';
 import React from "react";
 import OldCollageImageMapper from "./OldCollageImageMapper";
 

@@ -19,9 +19,19 @@ class LayerInfo {
         /** @var psdPath.Path */
         this.maskPath = maskPath;
     }
+
+    copy() {
+        return new LayerInfo(
+            this.fileName,
+            this.name,
+            this.left,
+            this.top,
+            this.maskPath.copy()
+        )
+    }
 }
 
-async function extractFromGroup(group, dirPath) {
+async function extractFromGroup(group, extractionDir, groupDir) {
     const layers = group.children().filter(layer => layer.type === 'layer');
     if (!checkNamesAreUnique(layers)) {
         return null;
@@ -35,14 +45,15 @@ async function extractFromGroup(group, dirPath) {
         }
         const fileName = sanitizeFilename(layer.name) + '.png';
         const layerInfo = new LayerInfo(
-            fileName,
+            path.join(groupDir, fileName),
             layer.name,
             layer.left,
             layer.top,
             psdPath.parsePaths(vectorMask.export().paths)
         );
-        process.stdout.write(`Extracting ${layer.name} layer to ${fileName}...`);
-        await layer.layer.image.saveAsPng(path.join(dirPath, fileName));
+
+        process.stdout.write(`Extracting ${layer.name} layer to ${layerInfo.fileName}...`);
+        await layer.layer.image.saveAsPng(path.join(extractionDir, layerInfo.fileName));
         process.stdout.write('done' + os.EOL);
         layerInfos.push(layerInfo);
     }

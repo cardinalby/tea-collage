@@ -20,6 +20,10 @@ class SubpathPoint {
         this.x = limitValue(Math.round(imgWidth * this.x), 0, imgWidth);
         this.y = limitValue(Math.round(imgHeight * this.y), 0, imgHeight);
     }
+
+    copy() {
+        return new SubpathPoint(this.x, this.y);
+    }
 }
 
 /**
@@ -41,6 +45,12 @@ class SubPath {
         }
         return coords;
     }
+
+    copy() {
+        return new SubPath(
+            this.points.map(point => point.copy())
+        );
+    }
 }
 
 /**
@@ -53,6 +63,12 @@ class Path {
 
     convertToAbsCoords(width, height) {
         this.subPathes.forEach(subpath => subpath.convertToAbsCoords(width, height));
+    }
+
+    copy() {
+        return new Path(
+            this.subPathes.map(subpath => subpath.copy())
+        )
     }
 }
 

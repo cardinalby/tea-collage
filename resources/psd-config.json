@@ -4,5 +4,9 @@
     "background": "Background",
     "overlayGroup": "overlay"
   },
-  "targetWidth": 1200
+  "targetSizes": [
+    { "name": "large", "width": 1535 },
+    { "name": "medium", "width": 1024 },
+    { "name": "preview", "width": 300, "preview": true }
+  ]
 }

@@ -1,7 +1,8 @@
 const sharp = require('sharp');
 const os = require('os');
+const v8 = require('v8');
 
-async function resizeFile(srcFilePath, targetFilePath, factor, toJpeg) {
+async function resizeFile(srcFilePath, targetFilePath, factor, processing) {
     const img = sharp(srcFilePath);
     const metadata = await img.metadata();
     const newSize = {
@@ -9,13 +10,12 @@ async function resizeFile(srcFilePath, targetFilePath, factor, toJpeg) {
         height: Math.round(metadata.height * factor),
     };
 
-    process.stdout.write(`Resizing ${srcFilePath}...`);
+    process.stdout.write(`Resizing ${targetFilePath}...`);
 
     img.resize(newSize)
-    if (toJpeg) {
-        img
-            .toFormat('jpeg')
-            .jpeg({ quality: 100, progressive: true});
+
+    if (processing) {
+        processing(img);
     }
 
     return img
@@ -31,7 +31,7 @@ function adjustPsdResult(psdResult, resizeFactor) {
     psdResult.width = Math.round(psdResult.width * resizeFactor);
     psdResult.height = Math.round(psdResult.height * resizeFactor);
 
-    for (const layer of psdResult.layers) {
+    for (const layer of psdResult.overlayLayers) {
         layer.left = Math.round(layer.left * resizeFactor);
         layer.top = Math.round(layer.top * resizeFactor);
 

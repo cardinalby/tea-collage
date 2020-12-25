@@ -3,17 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "prop-types": "^15.6.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-scripts": "4.0.1",
-    "web-vitals": "^0.2.4",
-    "react-image-mapper": "^0.0.15"
+    "react-fast-compare": "^2.0.4",
+    "react-image": "^4.0.3",
+    "require-dir": "1.2.0"
   },
   "devDependencies": {
     "psd": "^3.2.0",
     "sharp": "^0.26.3",
     "fs-extra": "^9.0.1",
-    "sanitize-filename": "^1.6.3"
+    "sanitize-filename": "^1.6.3",
+    "react-scripts": "4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -3,15 +3,22 @@ const collageInfo = require('./collageInfo');
 const consts = require('./consts');
 const fs = require('fs-extra');
 const path = require('path');
-
+const psdConfig = require('../resources/psd-config.json');
 
 (async function() {
-    process.stdout.write(`Updating ${consts.COLLAGE_INFO_FILE}...`);
+    const files = psdConfig.targetSizes
+        .filter(size => !size.preview)
+        .map(size => path.join(consts.COLLAGE_INFO_DIR, size.name) + '.json');
 
-    const collageInfoJson = await fs.readJson(consts.COLLAGE_INFO_FILE);
-    collageInfo.updateImgAreas(collageInfoJson);
+    for (const file of files) {
+        process.stdout.write(`Updating ${file}...`);
 
-    await fs.writeJson(consts.COLLAGE_INFO_FILE, collageInfoJson);
-    process.stdout.write('done' + os.EOL)
+        const collageInfoJson = await fs.readJson(file);
+        collageInfo.updateImgAreas(collageInfoJson);
+
+        await fs.writeJson(file, collageInfoJson);
+        process.stdout.write('done' + os.EOL)
+    }
+
 })();
 
