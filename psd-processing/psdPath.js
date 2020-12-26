@@ -48,7 +48,7 @@ class SubPath {
 
     copy() {
         return new SubPath(
-            this.points.map(point => point.copy())
+            this.points && this.points.map(point => point.copy())
         );
     }
 }
@@ -67,7 +67,7 @@ class Path {
 
     copy() {
         return new Path(
-            this.subPathes.map(subpath => subpath.copy())
+            this.subPathes && this.subPathes.map(subpath => subpath.copy())
         )
     }
 }

@@ -11,13 +11,13 @@ const sanitizeFilename = require("sanitize-filename");
 /**
  * @return {Promise<void>}
  */
-async function prepareImagesDir(dirPath) {
+async function emptyDir(dirPath) {
     await fs.ensureDir(dirPath);
     await fs.emptyDir(dirPath);
 }
 
 (async function() {
-    await prepareImagesDir(consts.EXTRACTED_DIR);
+    await emptyDir(consts.EXTRACTED_DIR);
     const psdResult = await processPsd(
         path.join(consts.RESOURCES_DIR, psdConfig.psdFile),
         consts.EXTRACTED_DIR,
@@ -27,8 +27,9 @@ async function prepareImagesDir(dirPath) {
 
     await fs.ensureDir(consts.COLLAGE_INFO_DIR);
     await fs.emptyDir(consts.COLLAGE_INFO_DIR);
+    await emptyDir(consts.RESIZED_DIR);
     for (const size of psdConfig.targetSizes) {
-        await prepareImagesDir(path.join(consts.RESIZED_DIR, size.name));
+        await emptyDir(path.join(consts.RESIZED_DIR, size.name));
         const scale = size.width / psdResult.width;
 
         const destDir = path.join(consts.RESIZED_DIR, size.name);
@@ -39,14 +40,9 @@ async function prepareImagesDir(dirPath) {
             path.join(consts.EXTRACTED_DIR, psdResult.backgroundFileName),
             path.join(destDir, psdResultCopy.backgroundFileName),
             size.preview ? scale * 1.7 : scale,
-            img => {
-                if (size.preview) {
-                    img.toColourspace('b-w')
-                    img.grayscale();
-                }
-                 img
-                     .toFormat('jpeg')
-                     .jpeg({quality: size.preview ? 60 : 100, progressive: true});
+            {
+                jpeg: size.preview ? 60 : 100,
+                grayscale: size.preview
             }
         );
 
@@ -55,7 +51,10 @@ async function prepareImagesDir(dirPath) {
             await resizing.resizeFile(
                 path.join(consts.EXTRACTED_DIR, layer.fileName),
                 path.join(destDir, layer.fileName),
-                scale
+                scale,
+                {
+                    grayscale: size.preview
+                }
             )
         }
 

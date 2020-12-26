@@ -8,26 +8,26 @@ const psdPath = require('./psdPath')
  * @property name
  * @property left
  * @property top
+ * @property width
+ * @property height
  * @property {psdPath.Path} maskPath
  */
 class LayerInfo {
-    constructor(fileName, name, left, top, maskPath) {
+    constructor(fileName, name, left, top, width, height, maskPath) {
         this.fileName = fileName;
         this.name = name;
         this.left = left;
         this.top = top;
+        this.width = width;
+        this.height = height;
         /** @var psdPath.Path */
         this.maskPath = maskPath;
     }
 
     copy() {
-        return new LayerInfo(
-            this.fileName,
-            this.name,
-            this.left,
-            this.top,
-            this.maskPath.copy()
-        )
+        return Object.assign(new LayerInfo(), this, {
+            maskPath: this.maskPath && this.maskPath.copy()
+        });
     }
 }
 
@@ -49,6 +49,8 @@ async function extractFromGroup(group, extractionDir, groupDir) {
             layer.name,
             layer.left,
             layer.top,
+            layer.width,
+            layer.height,
             psdPath.parsePaths(vectorMask.export().paths)
         );
 

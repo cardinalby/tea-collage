@@ -4,12 +4,16 @@ const areasConfig = require('../resources/img-areas-config.json');
  * @property fileName
  * @property left
  * @property top
+ * @property width
+ * @property height
  */
 class CollageItem {
-    constructor(fileName, left, top) {
+    constructor(fileName, left, top, width, height) {
         this.fileName = fileName;
         this.left = left;
         this.top = top;
+        this.width = width;
+        this.height = height;
     }
 }
 
@@ -86,7 +90,9 @@ function getOverlayItems(psdProcessingResult, preview) {
             new CollageItem(
                 layer.fileName,
                 preview ? undefined : layer.left,
-                preview ? undefined :layer.top
+                preview ? undefined : layer.top,
+                preview ? undefined : layer.width,
+                preview ? undefined : layer.height
             )
         ]
     ));

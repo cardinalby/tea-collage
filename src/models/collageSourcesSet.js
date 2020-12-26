@@ -3,6 +3,30 @@ const collageSizes = require('../collage-info/sizes.json');
 const extractedDir = process.env.PUBLIC_URL + '/extracted';
 
 /**
+ * @property left
+ * @property top
+ * @property width
+ * @property height
+ */
+class OverlayDimensions {
+    constructor(left, top, width, height) {
+        this.left = left;
+        this.top = top;
+        this.width = width;
+        this.height = height;
+    }
+
+    scale(scale) {
+        return new OverlayDimensions(
+            this.left * scale,
+            this.top * scale,
+            this.width * scale,
+            this.height * scale
+        )
+    }
+}
+
+/**
  * @property {CollageInfo} preview
  * @property {CollageInfo} full
  */
@@ -14,22 +38,28 @@ class CollageSources {
         this.previewName = previewName;
     }
 
-    getBackgroundUrl(preview) {
+    getBackgroundUrl(preview = false) {
         const info = this._getInfo(preview);
         return `${extractedDir}/${info.dir}/${info.collage.background.fileName}`;
     }
 
-    getOverlayUrl(id, preview) {
+    getOverlayUrl(id, preview = false) {
         const info = this._getInfo(preview);
         const overlayItem = info.collage.overlayItems[id];
         return overlayItem && `${extractedDir}/${info.dir}/${overlayItem.fileName}`;
     }
 
     /**
-     * @return {CollageItem}
+     * @return {OverlayDimensions}
      */
-    getOverlayItem(id) {
-        return this.full.overlayItems[id];
+    getOverlayDimensions(id, preview = false) {
+        const collageItem = (preview ? this.preview : this.full).overlayItems[id];
+        return collageItem && new OverlayDimensions(
+            collageItem.left,
+            collageItem.top,
+            collageItem.width,
+            collageItem.height
+        );
     }
 
     /**

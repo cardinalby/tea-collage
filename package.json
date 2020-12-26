@@ -8,7 +8,9 @@
     "react-dom": "^17.0.1",
     "react-fast-compare": "^2.0.4",
     "react-image": "^4.0.3",
-    "require-dir": "1.2.0"
+    "require-dir": "1.2.0",
+    "memoize-one": "^5.1.1",
+    "react-progressive-image": "^0.6.0"
   },
   "devDependencies": {
     "psd": "^3.2.0",

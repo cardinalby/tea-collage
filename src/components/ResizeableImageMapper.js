@@ -33,16 +33,13 @@ function ResizeableImageMapper(props) {
 
     let overlay = '';
     if (props.overlayLayerId) {
-        const imgUrl = props.collageSources.getOverlayUrl(props.overlayLayerId);
-        const overlayLayer = props.collageSources.getOverlayItem(props.overlayLayerId);
+        const overlayDimensions =
+            props.collageSources.getOverlayDimensions(props.overlayLayerId).scale(scale);
         overlay = (
             <OverlayLayer
-                src={imgUrl}
-                top={overlayLayer.top}
-                left={overlayLayer.left}
-                width={size.width}
-                height={size.height}
-                scale={scale}
+                src={props.collageSources.getOverlayUrl(props.overlayLayerId)}
+                previewSrc={props.collageSources.getOverlayUrl(props.overlayLayerId, true)}
+                dimensions={overlayDimensions}
                 onFilledAreaLeave={() => props.onOverlayLeave && props.onOverlayLeave()}
                 onFilledAreaClick={() => props.onOverlayClick && props.onOverlayClick()}
             />

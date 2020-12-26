@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import isEqual from "react-fast-compare";
 import Spinner from "./Spinner";
+import memoize from "memoize-one";
 
 export default class ImageMapper extends Component {
+
     constructor(props) {
         super(props);
         [
@@ -39,18 +41,17 @@ export default class ImageMapper extends Component {
         this.selectedArea = null;
     }
 
-    updateGroups(areas) {
-        this.groups = new Map();
-        const addGroupArea = (group, area) => this.groups.has(group)
-            ? this.groups.get(group).push(area)
-            : this.groups.set(group, [area]);
-
-        for (const area of areas) {
-            if (area.group !== undefined) {
-                addGroupArea(area.group, area);
-            }
-        }
-    }
+    getGroups = memoize(areas => {
+        const groups = new Map();
+        areas
+            .filter(area => area.group)
+            .forEach(area =>
+                groups.has(area.group)
+                    ? groups.get(area.group).push(area)
+                    : groups.set(area.group, [area])
+            )
+        return groups;
+    });
 
     shouldComponentUpdate(nextProps, nextState) {
         const propChanged = this.watchedProps.some(
@@ -74,9 +75,9 @@ export default class ImageMapper extends Component {
     }
 
     componentDidUpdate(prevProps) {
+        console.log('did update');
         this.updateCacheMap();
         this.initCanvas();
-        this.updateGroups(this.props.map.areas);
 
         if (this.props.previewSrc) {
             // start loading
@@ -152,7 +153,6 @@ export default class ImageMapper extends Component {
             (this.props.height || this.img.clientHeight) + "px";
         this.ctx = this.canvas.getContext("2d");
         this.ctx.fillStyle = this.props.fillColor;
-        //this.ctx.strokeStyle = this.props.strokeColor;
 
         if (this.props.onLoad) this.props.onLoad();
 
@@ -160,9 +160,10 @@ export default class ImageMapper extends Component {
     }
 
     hoverOn(area, index, event) {
+        const groups = this.getGroups(this.props.map.areas)
         if (this.props.active) {
             this.selectedArea = area;
-            const groupAreas = this.groups.get(area.group);
+            const groupAreas = groups.get(area.group);
             for (const groupArea of groupAreas) {
                 const drawMethod = "draw" + groupArea.shape;
                 if (this[drawMethod]) {
@@ -228,15 +229,16 @@ export default class ImageMapper extends Component {
     }
 
     renderPrefilledAreas() {
-        this.state.map.areas.map(area => {
-            if (!area.preFillColor) return;
-            this["draw" + area.shape](
-                this.scaleCoords(area.coords),
-                area.preFillColor,
-                area.lineWidth || this.props.lineWidth,
-                area.strokeColor || this.props.strokeColor
-            );
-        });
+        this.state.map.areas
+            .filter(area => area.preFillColor)
+            .forEach(area => {
+                this["draw" + area.shape](
+                    this.scaleCoords(area.coords),
+                    area.preFillColor,
+                    area.lineWidth || this.props.lineWidth,
+                    area.strokeColor || this.props.strokeColor
+                );
+            });
     }
 
     computeCenter(area) {
@@ -270,6 +272,7 @@ export default class ImageMapper extends Component {
             const extendedArea = { ...area, scaledCoords, center };
             return (
                 <area
+                    alt={area.group || area._id || index}
                     key={area._id || index}
                     shape={area.shape}
                     coords={scaledCoords.join(",")}
@@ -327,6 +330,7 @@ ImageMapper.propTypes = {
     imgWidth: PropTypes.number,
     lineWidth: PropTypes.number,
     src: PropTypes.string.isRequired,
+    previewSrc: PropTypes.string,
     strokeColor: PropTypes.string,
     width: PropTypes.number,
 
@@ -342,6 +346,7 @@ ImageMapper.propTypes = {
         areas: PropTypes.arrayOf(
             PropTypes.shape({
                 area: PropTypes.shape({
+                    group: PropTypes.string,
                     coords: PropTypes.arrayOf(PropTypes.number),
                     href: PropTypes.string,
                     shape: PropTypes.string,

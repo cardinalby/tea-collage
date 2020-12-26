@@ -22,13 +22,9 @@ class PsdProcessingResult {
     }
 
     copy() {
-        return new PsdProcessingResult(
-            this.overlayLayers.map(layer => layer.copy()),
-            this.backgroundFileName,
-            this.overlayDirName,
-            this.width,
-            this.height
-        );
+        return Object.assign(new PsdProcessingResult(), this, {
+            overlayLayers: this.overlayLayers.map(layer => layer.copy()),
+        });
     }
 }
 

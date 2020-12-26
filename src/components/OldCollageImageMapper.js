@@ -36,7 +36,7 @@ function OldCollageImageMapper(props) {
 
     return (
         <div className="collage-container" ref={node => setContainerRef(node)}>
-            <div style={{'width': 50, 'height': 40, 'background-color': 'red'}}
+            <div style={{'width': 50, 'height': 40, backgroundColor: 'red'}}
                  onClick={changeSize}
             />
             {imageMapper}

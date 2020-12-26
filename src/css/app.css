@@ -44,12 +44,14 @@
   height: 95vh;
 }
 
-.collage-overlay {
+.collage-overlay-container {
   position: absolute;
   z-index: 100;
+  width: 100%;
+  height: 100%;
 }
 
-.collage-overlay img {
+.collage-overlay-img {
   transition: visibility 0s linear 2300ms, opacity 2300ms;
   position: absolute;
   transform-origin: top left;
