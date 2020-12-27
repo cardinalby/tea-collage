@@ -118,8 +118,7 @@ export default class ImageMapper extends Component {
     initCanvas() {
         this.canvas.width = this.props.width || this.img.clientWidth;
         this.canvas.height = this.props.height || this.img.clientHeight;
-        this.container.style.width =
-            (this.props.width || this.img.clientWidth) + "px";
+        this.container.style.width = (this.props.width || this.img.clientWidth) + "px";
         this.container.style.height =
             (this.props.height || this.img.clientHeight) + "px";
         this.ctx = this.canvas.getContext("2d");
@@ -129,8 +128,8 @@ export default class ImageMapper extends Component {
     }
 
     hoverOn(area, index, event) {
-        const groups = this.getGroups(this.props.map.areas)
-        if (this.props.active) {
+        if (this.props.active && this.ctx) {
+            const groups = this.getGroups(this.props.map.areas)
             this.selectedArea = area;
             const groupAreas = groups.get(area.group);
             for (const groupArea of groupAreas) {
@@ -152,7 +151,7 @@ export default class ImageMapper extends Component {
     }
 
     hoverOff(area, index, event) {
-        if (this.props.active) {
+        if (this.props.active && this.ctx) {
             this.selectedArea = null;
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.renderPrefilledAreas();
@@ -268,12 +267,11 @@ export default class ImageMapper extends Component {
                 <ImagePro
                     src={this.props.src}
                     previewSrc={this.props.previewSrc}
-                    style={
-                        {...this.styles.img},
-                        {
-                            width: this.props.width,
-                            height: this.props.height
-                        }}
+                    style={{
+                        ...this.styles.img,
+                        width: this.props.width,
+                        height: this.props.height
+                    }}
                     useMap={`#${this.state.map.name}`}
                     imgRef={node => (this.img = node)}
                     onClick={this.imageClick.bind(this)}

@@ -42,6 +42,9 @@ function ResizeableImageMapper(props) {
                 dimensions={overlayDimensions}
                 onFilledAreaLeave={() => props.onOverlayLeave && props.onOverlayLeave()}
                 onFilledAreaClick={() => props.onOverlayClick && props.onOverlayClick()}
+                onLoad={props.onLoad}
+                onLoading={props.onLoading}
+                onError={props.onError}
             />
         );
     }

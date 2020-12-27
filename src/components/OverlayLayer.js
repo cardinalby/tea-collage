@@ -1,16 +1,16 @@
 import React from 'react';
-import ProgressiveImage from 'react-progressive-image';
+import {ImagePro} from "./ImagePro";
 
 /** @param {OverlayDimensions} props.dimensions */
 function OverlayLayer(props) {
     let ctx = null;
-    const onImageLoad = (event) => {
-        const img = event.target;
+    const onImageLoad = (target, preview, component) => {
         const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = target.width;
+        canvas.height = target.height;
         ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, img.width, img.height);
+        ctx.drawImage(target, 0, 0, target.width, target.height);
+        props.onLoad(target, preview, component);
     };
 
     const isTransparentPoint = event => {
@@ -41,25 +41,6 @@ function OverlayLayer(props) {
         }
     }
 
-    const renderImg = (src, loading) =>
-        <div style={{position: 'absolute', width: '100%', height: '100%'}}>
-            <img
-                className={'collage-overlay-img'}
-                style={{
-                    left: props.dimensions.left,
-                    top: props.dimensions.top,
-                    width: props.dimensions.width,
-                    height: props.dimensions.height,
-                }}
-                src={src}
-                alt={'overlay'}
-                onMouseMove={onMouseMove}
-                onMouseLeave={onMouseLeave}
-                onClick={onMouseClick}
-                onLoad={onImageLoad}
-            />
-        </div>
-
     return (
         <div
             className={'collage-overlay-container'}
@@ -68,9 +49,26 @@ function OverlayLayer(props) {
                 top: 0,
             }}
         >
-            <ProgressiveImage src={props.src} placeholder={props.previewSrc}>
-                {renderImg}
-            </ProgressiveImage>
+            <div style={{position: 'absolute', width: '100%', height: '100%'}}>
+                <ImagePro
+                    src={props.src}
+                    previewSrc={props.previewSrc}
+                    className={'collage-overlay-img'}
+                    style={{
+                        left: props.dimensions.left,
+                        top: props.dimensions.top,
+                        width: props.dimensions.width,
+                        height: props.dimensions.height,
+                    }}
+                    alt={'overlay'}
+                    onMouseMove={onMouseMove}
+                    onMouseLeave={onMouseLeave}
+                    onClick={onMouseClick}
+                    onLoad={onImageLoad}
+                    onLoading={props.onLoading}
+                    onError={props.onError}
+                />
+            </div>
         </div>
     );
 }
