@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import isEqual from "react-fast-compare";
-import Spinner from "./Spinner";
 import memoize from "memoize-one";
+import {ImagePro} from "./ImagePro";
 
 export default class ImageMapper extends Component {
 
@@ -12,7 +12,6 @@ export default class ImageMapper extends Component {
             "drawrect",
             "drawcircle",
             "drawpoly",
-            "onImageLoad",
             "initCanvas",
             "renderPrefilledAreas"
         ].forEach(f => (this[f] = this[f].bind(this)));
@@ -20,7 +19,11 @@ export default class ImageMapper extends Component {
         this.styles = {
             container: { position: "relative" },
             canvas: { ...absPos, pointerEvents: "none", zIndex: 2 },
-            img: { ...absPos, zIndex: 1, userSelect: "none" },
+            img: {
+                ...absPos,
+                zIndex: 1,
+                userSelect: "none"
+            },
             map: (props.onClick && { cursor: "pointer" }) || undefined
         };
         // Props watched for changes to trigger update
@@ -34,11 +37,10 @@ export default class ImageMapper extends Component {
             "strokeColor",
             "width"
         ];
-        this.state = {
-            imgSrc: this.props.previewSrc || this.props.src,
-            imgLoaded: false
-        };
         this.selectedArea = null;
+        this.state = {
+            map: this.props.map
+        }
     }
 
     getGroups = memoize(areas => {
@@ -58,36 +60,18 @@ export default class ImageMapper extends Component {
             prop => !isEqual(this.props[prop], nextProps[prop])
         );
         return !isEqual(this.props.map, this.state.map)
-            || propChanged
-            || nextState.imgSrc !== this.state.imgSrc
-            || nextState.imgLoaded !== this.state.imgLoaded
-    }
-
-    componentWillMount() {
-        this.updateCacheMap();
+            || propChanged;
     }
 
     updateCacheMap() {
-        this.setState(
-            { map: JSON.parse(JSON.stringify(this.props.map)) },
-            this.initCanvas
-        );
+        this.setState({
+            map: JSON.parse(JSON.stringify(this.props.map))
+        });
     }
 
     componentDidUpdate(prevProps) {
-        console.log('did update');
         this.updateCacheMap();
         this.initCanvas();
-
-        if (this.props.previewSrc) {
-            // start loading
-            (new Image()).src = this.props.src;
-        }
-        if (this.state.imgSrc !== this.props.previewSrc &&
-            this.state.imgSrc !== this.props.src
-        ) {
-            this.setState({imgSrc: this.props.src, imgLoaded: false})
-        }
     }
 
     drawrect(coords, fillColor, lineWidth, strokeColor) {
@@ -131,20 +115,7 @@ export default class ImageMapper extends Component {
         this.ctx.fillStyle = this.props.fillColor;
     }
 
-    onImageLoad() {
-        if (this.state.imgSrc === this.props.previewSrc) {
-            this.setState({imgSrc: this.props.src});
-            this.initCanvas();
-        } else {
-            this.setState({imgLoaded: true});
-        }
-    }
-
     initCanvas() {
-        if (this.props.width) this.img.width = this.props.width;
-
-        if (this.props.height) this.img.height = this.props.height;
-
         this.canvas.width = this.props.width || this.img.clientWidth;
         this.canvas.height = this.props.height || this.img.clientHeight;
         this.container.style.width =
@@ -153,8 +124,6 @@ export default class ImageMapper extends Component {
             (this.props.height || this.img.clientHeight) + "px";
         this.ctx = this.canvas.getContext("2d");
         this.ctx.fillStyle = this.props.fillColor;
-
-        if (this.props.onLoad) this.props.onLoad();
 
         this.renderPrefilledAreas();
     }
@@ -218,6 +187,13 @@ export default class ImageMapper extends Component {
     imageMouseMove(area, index, event) {
         if (this.props.onImageMouseMove) {
             this.props.onImageMouseMove(area, index, event);
+        }
+    }
+
+    onImgLoaded(target, preview, component) {
+        this.initCanvas();
+        if (this.props.onLoad) {
+            this.props.onLoad(target, preview, component);
         }
     }
 
@@ -287,21 +263,24 @@ export default class ImageMapper extends Component {
     }
 
     render() {
-        const spinner = !this.state.imgLoaded
-            ? <Spinner preview={this.state.imgSrc === this.props.previewSrc} />
-            : '';
         return (
             <div style={this.styles.container} ref={node => (this.container = node)}>
-                {spinner}
-                <img
-                    style={this.styles.img}
-                    src={this.state.imgSrc}
+                <ImagePro
+                    src={this.props.src}
+                    previewSrc={this.props.previewSrc}
+                    style={
+                        {...this.styles.img},
+                        {
+                            width: this.props.width,
+                            height: this.props.height
+                        }}
                     useMap={`#${this.state.map.name}`}
-                    alt=""
-                    ref={node => (this.img = node)}
-                    onLoad={this.onImageLoad}
+                    imgRef={node => (this.img = node)}
                     onClick={this.imageClick.bind(this)}
                     onMouseMove={this.imageMouseMove.bind(this)}
+                    onLoad={this.onImgLoaded.bind(this)}
+                    onLoading={this.props.onLoading}
+                    onError={this.props.onError}
                 />
                 <canvas ref={node => (this.canvas = node)} style={this.styles.canvas} />
                 <map name={this.state.map.name} style={this.styles.map}>
@@ -339,6 +318,8 @@ ImageMapper.propTypes = {
     onImageClick: PropTypes.func,
     onImageMouseMove: PropTypes.func,
     onLoad: PropTypes.func,
+    onLoading: PropTypes.func,
+    onError: PropTypes.func,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
 

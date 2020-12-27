@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import ResizeableImageMapper from "./ResizeableImageMapper";
 import collageSourcesSet from "../models/collageSourcesSet";
+import imgLoadingEvents from "../models/imgLoadingEvents";
+import TeapotSpinner from "./TeapotSpinner";
 
 function OldCollageImageMapper(props) {
     const [containerRef, setContainerRef] = useState(null);
@@ -14,6 +16,12 @@ function OldCollageImageMapper(props) {
     const changeSize = () => {
         setCollageSources(collageSourcesSet.getSources('large'));
     }
+
+    const imagesLoadingHandler = imgLoadingEvents();
+
+    const teapotSpinner = imagesLoadingHandler.isLoading
+        ? <TeapotSpinner preview={imagesLoadingHandler.isPreview} />
+        : '';
 
     const imageMapper = containerRef
         ? <ResizeableImageMapper
@@ -31,7 +39,10 @@ function OldCollageImageMapper(props) {
             onClick={onAreaClick}
             onOverlayLeave={onOverlayLeave}
             onOverlayClick={onOverlayClick}
-        />
+            {...imagesLoadingHandler.eventHandlers}
+        >
+            {teapotSpinner}
+        </ResizeableImageMapper>
         : '';
 
     return (

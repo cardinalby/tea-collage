@@ -1,6 +1,5 @@
 import React from 'react';
 import ProgressiveImage from 'react-progressive-image';
-import Spinner from "./Spinner";
 
 /** @param {OverlayDimensions} props.dimensions */
 function OverlayLayer(props) {
@@ -59,7 +58,6 @@ function OverlayLayer(props) {
                 onClick={onMouseClick}
                 onLoad={onImageLoad}
             />
-            {loading ? <Spinner /> : ''}
         </div>
 
     return (

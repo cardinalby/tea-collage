@@ -53,6 +53,7 @@ function ResizeableImageMapper(props) {
                 {...size}
             />
             {overlay}
+            {props.children}
         </div>
     );
 }
