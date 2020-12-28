@@ -33,6 +33,8 @@ async function resizeFile(srcFilePath, targetFilePath, scale, options) {
                 quality: Number.isFinite(options.jpeg) ? options.jpeg : 100,
                 progressive: true
             });
+    } else {
+        img.png({progressive: true});
     }
 
     return img

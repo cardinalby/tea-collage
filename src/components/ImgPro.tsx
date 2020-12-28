@@ -1,4 +1,5 @@
 import React, {Component, RefCallback} from "react";
+import isEqual from "react-fast-compare";
 import {ImgProLoadEvents, ImgProLoadEventsWrapper} from "./ImgPro/ImgProLoadEvents";
 
 export type ImgProEventHandler = (target: HTMLImageElement, preview: boolean, component: ImgPro) => void;
@@ -12,7 +13,7 @@ export interface ImgProProps {
     previewSrc: string,
     srcSetData?: { sizes: string, srcSet: string },
     imgProps: React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,
-    loadEvents: ImgProLoadEvents
+    loadEvents?: ImgProLoadEvents
 }
 
 interface ImgProState {
@@ -22,8 +23,10 @@ interface ImgProState {
 }
 
 export class ImgPro extends Component<ImgProProps, ImgProState> {
-    image?: HTMLImageElement;
+    hiddenImage?: HTMLImageElement;
+    renderedImage?: HTMLImageElement;
     loadEvents = new ImgProLoadEventsWrapper();
+    willUnmount: boolean = false;
     
     public constructor(props: ImgProProps) {
         super(props);
@@ -50,22 +53,29 @@ export class ImgPro extends Component<ImgProProps, ImgProState> {
     }
 
     componentWillUnmount() {
-        if (this.image) {
-            this.image.onload = null;
-            this.image.onerror = null;
+        if (this.hiddenImage) {
+            this.hiddenImage.onload = null;
+            this.hiddenImage.onerror = null;
         }
+        if (this.hiddenImage) {
+            this.loadEvents.onError(this.hiddenImage, false, this);
+        }
+        if (this.state.loading && this.renderedImage) {
+            this.loadEvents.onError(this.renderedImage, true, this);
+        }
+        this.willUnmount = true;
     }
 
     protected loadImage = (src, srcSetData) => {
         // If there is already an image we nullify the onload
         // and onerror props so it does not incorrectly set state
         // when it resolves
-        if (this.image) {
-            this.image.onload = null;
-            this.image.onerror = null;
+        if (this.hiddenImage) {
+            this.hiddenImage.onload = null;
+            this.hiddenImage.onerror = null;
         }
         const image = new Image();
-        this.image = image;
+        this.hiddenImage = image;
         image.onload = this.onLoad;
         image.onerror = this.onError;
         image.src = src;
@@ -73,9 +83,7 @@ export class ImgPro extends Component<ImgProProps, ImgProState> {
             image.srcset = srcSetData.srcSet;
             image.sizes = srcSetData.sizes;
         }
-        if (this.props.loadEvents.onLoading) {
-            this.props.loadEvents.onLoading(image, false, this);
-        }
+        this.loadEvents.onLoading(image, false, this);
     };
 
     protected onLoad = (event) => {
@@ -105,15 +113,11 @@ export class ImgPro extends Component<ImgProProps, ImgProState> {
                 sizes: loadedEvent.target.sizes || ''
             }
         });
-        if (this.props.loadEvents.onLoad) {
-            this.props.loadEvents.onLoad(loadedEvent.target, false, this)
-        }
+        this.loadEvents.onLoad(loadedEvent.target, false, this);
     };
 
     protected onError = (errorEvent) => {
-        if (this.props.loadEvents.onError) {
-            this.props.loadEvents.onError(errorEvent, false, this);
-        }
+        this.loadEvents.onError(errorEvent, false, this);
     };
 
     protected onInternalImgLoad = event => {
@@ -129,10 +133,11 @@ export class ImgPro extends Component<ImgProProps, ImgProState> {
     }
 
     protected onInternalImgRef = node => {
+        this.renderedImage = node;
         if (this.props.imgRef) {
             this.props.imgRef(node)
         }
-        if (this.state.loading) {
+        if (this.state.loading && !this.willUnmount) {
             this.loadEvents.onLoading(node, true, this);
         }
     }

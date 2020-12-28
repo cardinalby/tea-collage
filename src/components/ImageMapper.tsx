@@ -36,6 +36,7 @@ export interface ImageMapperStyleProps {
     fillColor?: string,
     strokeColor?: string
     lineWidth?: number,
+    imgClassName?: string
 }
 
 export interface ImageMapperSourceProps {
@@ -83,6 +84,7 @@ const watchedProps = [
     "imgWidth",
     "imgHeight",
     "lineWidth",
+    "imgClassName",
     "src",
     "strokeColor",
     "width"
@@ -164,8 +166,7 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         const propChanged = watchedProps.some(
             prop => !isEqual(this.props[prop], nextProps[prop])
         );
-        return !isEqual(this.props.map, this.state.map)
-            || propChanged;
+        return propChanged || !isEqual(this.props.map, this.state.map)
     }
 
     protected updateCacheMap() {
@@ -377,7 +378,6 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
 
     render() {
         this.loadEvents = new ImgProLoadEventsWrapper(this.props.loadEvents);
-
         return (
             <div style={{
                     ...this.styles.container,
@@ -396,6 +396,7 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
                     }}
                     imgProps={{
                         style: this.styles.img,
+                        className: this.props.imgClassName,
                         useMap: `#${this.state.map.name}`,
                         onClick: this.imageClick.bind(this)
                     }}

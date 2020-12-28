@@ -44,6 +44,15 @@
   height: 95vh;
 }
 
+.collage-bg-active {
+  transition: all 0.2s ease;
+}
+
+.collage-bg-inactive {
+  filter: grayscale(0.6) brightness(0.6);
+  transition: all 0.5s ease;
+}
+
 .collage-overlay-container {
   position: absolute;
   z-index: 100;

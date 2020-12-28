@@ -105,6 +105,12 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
         );
     }
 
+    const imgMapperProps = {
+        ...getImageMapperProps(props),
+        ...size,
+        imgClassName: props.overlayLayerId ? 'collage-bg-inactive' : 'collage-bg-active'
+    };
+
     return (
         <div style={{position: 'absolute'}}>
             <ImageMapper
@@ -112,10 +118,7 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
                 previewSrc={props.collageSources.getBackgroundUrl(true)}
                 imgWidth={props.collageSources.full.background.width}
                 map={props.areasMap}
-                {...{
-                    ...getImageMapperProps(props),
-                    ...size
-                }}
+                {...imgMapperProps}
             />
             {overlay}
             {props.children}

@@ -44,7 +44,9 @@ export default function ImgLoadingEvents(): ImgProLoadingEvents {
                 }
             },
             onLoading: (target, preview, component) => addLoading(component, preview),
-            onError: (target, preview, component) => deleteLoading(component, preview)
+            onError: (target, preview, component) => {
+                deleteLoading(component, preview);
+            }
             },
         isLoading: loadingFull.size > 0 || loadingPreview.size > 0,
         isPreview: loadingPreview.size > 0
