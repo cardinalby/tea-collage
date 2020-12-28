@@ -1,16 +1,19 @@
 const sharp = require('sharp');
 const os = require('os');
+const path = require('path');
 
 /**
  * @param srcFilePath
- * @param targetFilePath
+ * @param targetDir
  * @param scale
+ * @param {'png'|'jpg'|'webp'} format
  * @param {Object} options
- * @param {boolean|number|undefined} options.jpeg
+ * @param {number|undefined} options.alphaQuality
+ * @param {number|undefined} options.quality
  * @param {boolean|undefined} options.grayscale
  * @return {Promise<*>}
  */
-async function resizeFile(srcFilePath, targetFilePath, scale, options) {
+async function resizeFile(srcFilePath, targetDir, scale, format, options = {}) {
     const img = sharp(srcFilePath);
     const metadata = await img.metadata();
     const newSize = {
@@ -18,7 +21,8 @@ async function resizeFile(srcFilePath, targetFilePath, scale, options) {
         height: Math.round(metadata.height * scale),
     };
 
-    process.stdout.write(`Resizing ${targetFilePath}...`);
+    const targetFileName = path.parse(srcFilePath).name + '.' + format;
+    process.stdout.write(`Resizing ${targetFileName}...`);
 
     img.resize(newSize)
     if (options.grayscale) {
@@ -26,22 +30,33 @@ async function resizeFile(srcFilePath, targetFilePath, scale, options) {
             .toColourspace('b-w')
             .grayscale();
     }
-    if (options.jpeg) {
-        img
+    switch (format) {
+        case "jpg": img
             .toFormat('jpeg')
             .jpeg({
-                quality: Number.isFinite(options.jpeg) ? options.jpeg : 100,
+                quality: Number.isFinite(options.quality) ? options.quality : 100,
                 progressive: true
             });
-    } else {
-        img.png({progressive: true});
+            break;
+        case "png": img
+            .toFormat('png')
+            .png({progressive: true});
+            break;
+        case "webp": img
+            .toFormat('webp')
+            .webp({
+                alphaQuality: options.alphaQuality,
+                quality: options.quality,
+                reductionEffort: 6,
+                nearLossless: true
+            });
     }
 
     return img
-        .toFile(targetFilePath)
+        .toFile(path.join(targetDir, targetFileName))
         .then(() => {
             process.stdout.write('done' + os.EOL);
-            return targetFilePath;
+            return targetFileName;
         });
 }
 

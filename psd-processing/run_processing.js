@@ -36,14 +36,15 @@ async function saveImgAreas(psdResult) {
  * @param {string} destDir
  */
 async function saveResizedBackground(psdResult, psdResultResized, preview, destDir) {
-    psdResultResized.backgroundFileName = sanitizeFilename(psdConfig.layers.background) + '.jpg';
     const resizedScale = psdResultResized.width / psdResult.width;
-    await resizing.resizeFile(
+    psdResultResized.backgroundFileName = await resizing.resizeFile(
         path.join(consts.EXTRACTED_DIR, psdResult.backgroundFileName),
-        path.join(destDir, psdResultResized.backgroundFileName),
+        destDir,
         preview ? resizedScale * 1.7 : resizedScale,
+        'jpg',
         {
-            jpeg: preview ? 60 : 100,
+            quality: preview ? 60 : 100,
+            alphaQuality: 0,
             grayscale: preview
         }
     );
@@ -77,14 +78,18 @@ async function saveResizedBackground(psdResult, psdResultResized, preview, destD
 
         await fs.ensureDir(path.join(destDir, psdResultCopy.overlayDirName));
         for (const layer of psdResultCopy.overlayLayers) {
-            await resizing.resizeFile(
+            const fileName = await resizing.resizeFile(
                 path.join(consts.EXTRACTED_DIR, layer.fileName),
-                path.join(destDir, layer.fileName),
+                path.join(destDir, psdResult.overlayDirName),
                 scale,
+                'webp',
                 {
-                    grayscale: size.preview
+                    grayscale: size.preview,
+                    quality: size.preview ? 50: 100,
+                    alphaQuality: 30
                 }
             )
+            layer.fileName = path.join(psdResult.overlayDirName, fileName);
         }
 
         const collageInfoFile = path.join(consts.COLLAGE_INFO_DIR, size.name + '.json');
