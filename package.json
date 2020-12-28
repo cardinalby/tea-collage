@@ -3,21 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "memoize-one": "^5.1.1",
     "prop-types": "^15.6.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-fast-compare": "^2.0.4",
-    "react-image": "^4.0.3",
-    "require-dir": "1.2.0",
-    "memoize-one": "^5.1.1",
-    "react-progressive-image": "^0.6.0"
+    "require-dir": "1.2.0"
   },
   "devDependencies": {
-    "psd": "^3.2.0",
-    "sharp": "^0.26.3",
+    "@types/node": "^14.14.16",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "awesome-typescript-loader": "^5.2.1",
     "fs-extra": "^9.0.1",
+    "psd": "^3.2.0",
+    "react-scripts": "4.0.1",
     "sanitize-filename": "^1.6.3",
-    "react-scripts": "4.0.1"
+    "sharp": "^0.26.3",
+    "typescript": "^3.9.7",
+    "node-worker-threads-pool": "^1.4.3"
   },
   "scripts": {
     "start": "react-scripts start",

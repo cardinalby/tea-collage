@@ -53,8 +53,6 @@ function adjustPsdResult(psdResult, resizeFactor) {
         layer.top = Math.round(layer.top * resizeFactor);
         layer.width = Math.round(layer.width * resizeFactor);
         layer.height = Math.round(layer.height * resizeFactor);
-
-        layer.maskPath.convertToAbsCoords(psdResult.width, psdResult.height);
     }
 }
 

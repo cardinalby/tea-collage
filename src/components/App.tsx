@@ -1,12 +1,12 @@
 import '../css/app.css';
 import '../css/spinner.css';
 import React from "react";
-import OldCollageImageMapper from "./OldCollageImageMapper";
+import Collage from "./Collage";
 
 function App() {
     return (
     <div className="App">
-        <OldCollageImageMapper />
+        <Collage />
     </div>
     );
 }

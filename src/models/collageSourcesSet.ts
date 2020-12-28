@@ -1,5 +1,10 @@
-/** @type {array} */
+import {generatedJson} from "../psdProcessingTypes";
+import {ImageMapperMap} from "../components/ImageMapper";
+
+type CollageInfo = generatedJson.CollageInfo;
+
 const collageSizes = require('../collage-info/sizes.json');
+const areasMap = require('../collage-info/areas-map.json');
 const extractedDir = process.env.PUBLIC_URL + '/extracted';
 
 /**
@@ -8,15 +13,15 @@ const extractedDir = process.env.PUBLIC_URL + '/extracted';
  * @property width
  * @property height
  */
-class OverlayDimensions {
-    constructor(left, top, width, height) {
-        this.left = left;
-        this.top = top;
-        this.width = width;
-        this.height = height;
-    }
+export class OverlayDimensions {
+    public constructor(
+        readonly left: number,
+        readonly top: number,
+        readonly width: number,
+        readonly height: number
+    ) {}
 
-    scale(scale) {
+    public scale(scale: number): OverlayDimensions {
         return new OverlayDimensions(
             this.left * scale,
             this.top * scale,
@@ -26,33 +31,26 @@ class OverlayDimensions {
     }
 }
 
-/**
- * @property {CollageInfo} preview
- * @property {CollageInfo} full
- */
-class CollageSources {
-    constructor(fullName, fullInfo, previewName, previewInfo) {
-        this.fullName = fullName;
-        this.full = fullInfo;
-        this.preview = previewInfo;
-        this.previewName = previewName;
-    }
+export class CollageSources {
+    public constructor(
+        public readonly fullName: string,
+        public readonly full: CollageInfo,
+        public readonly previewName: string,
+        public readonly preview: CollageInfo
+    ) {}
 
-    getBackgroundUrl(preview = false) {
+    public getBackgroundUrl(preview: boolean = false): string {
         const info = this._getInfo(preview);
         return `${extractedDir}/${info.dir}/${info.collage.background.fileName}`;
     }
 
-    getOverlayUrl(id, preview = false) {
+    public getOverlayUrl(id: string, preview: boolean = false): string {
         const info = this._getInfo(preview);
         const overlayItem = info.collage.overlayItems[id];
         return overlayItem && `${extractedDir}/${info.dir}/${overlayItem.fileName}`;
     }
 
-    /**
-     * @return {OverlayDimensions}
-     */
-    getOverlayDimensions(id, preview = false) {
+    public getOverlayDimensions(id: string, preview: boolean = false): OverlayDimensions {
         const collageItem = (preview ? this.preview : this.full).overlayItems[id];
         return collageItem && new OverlayDimensions(
             collageItem.left,
@@ -67,7 +65,7 @@ class CollageSources {
      * @return {{collage: (CollageInfo), dir: (string)}}
      * @private
      */
-    _getInfo(preview) {
+    _getInfo(preview: boolean) {
         return {
             dir: preview ? this.previewName : this.fullName,
             collage: preview ? this.preview : this.full
@@ -76,15 +74,18 @@ class CollageSources {
 }
 
 class SizeOption {
-    constructor(name, width, height) {
-        this.name = name;
-        this.width = width;
-        this.height = height;
-    }
+    constructor(
+        public readonly name: string,
+        public readonly width: number,
+        public readonly height: number
+    ) {}
 }
 
 class CollageSourcesSet {
-    constructor() {
+    public readonly sizesMap: any;
+    public readonly previewSize: any;
+
+    public constructor() {
         collageSizes.sort((a, b) => a.width - b.width);
         this.sizesMap = new Map(
             collageSizes
@@ -96,21 +97,15 @@ class CollageSourcesSet {
         );
         this.previewSize =
             collageSizes.find(size => size.preview) ||
-            collageSizes[0]
-        ;
+            collageSizes[0];
     }
 
-    /**
-     * @return {SizeOption[]}
-     */
-    getSizes() {
+    // noinspection JSUnusedGlobalSymbols
+    public getSizes(): SizeOption[] {
         return Array.from(this.sizesMap.values());
     }
 
-    /**
-     * @return {CollageSources}
-     */
-    getSources(setName) {
+    public getSources(setName: string): CollageSources|undefined {
         if (this.sizesMap.has(setName)) {
             return new CollageSources(
                 setName,
@@ -119,6 +114,11 @@ class CollageSourcesSet {
                 require(`../collage-info/${this.previewSize.name}.json`),
             )
         }
+        return undefined;
+    }
+
+    public getAreasMap(): ImageMapperMap {
+        return areasMap;
     }
 }
 

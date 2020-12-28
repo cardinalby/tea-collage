@@ -1,24 +1,17 @@
 const os = require('os');
-const collageInfo = require('./collageInfo');
+const imgAreasMap = require('./imgAreasMap');
 const consts = require('./consts');
 const fs = require('fs-extra');
 const path = require('path');
-const psdConfig = require('../resources/psd-config.json');
 
 (async function() {
-    const files = psdConfig.targetSizes
-        .filter(size => !size.preview)
-        .map(size => path.join(consts.COLLAGE_INFO_DIR, size.name) + '.json');
+    const file = path.join(consts.COLLAGE_INFO_DIR, consts.COLLAGE_INFO_AREAS_MAP_JSON);
+    process.stdout.write(`Updating ${file}...`);
 
-    for (const file of files) {
-        process.stdout.write(`Updating ${file}...`);
+    const areasMap = await fs.readJson(file);
+    imgAreasMap.updateImgAreas(areasMap);
 
-        const collageInfoJson = await fs.readJson(file);
-        collageInfo.updateImgAreas(collageInfoJson);
-
-        await fs.writeJson(file, collageInfoJson);
-        process.stdout.write('done' + os.EOL)
-    }
-
+    await fs.writeJson(file, areasMap);
+    process.stdout.write('done' + os.EOL)
 })();
 

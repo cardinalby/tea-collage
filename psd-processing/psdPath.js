@@ -14,13 +14,6 @@ class SubpathPoint {
         this.y = y;
     }
 
-    convertToAbsCoords(imgWidth, imgHeight) {
-        const limitValue = (value, from, to) => value < from ? from : (value > to ? to : value);
-
-        this.x = limitValue(Math.round(imgWidth * this.x), 0, imgWidth);
-        this.y = limitValue(Math.round(imgHeight * this.y), 0, imgHeight);
-    }
-
     copy() {
         return new SubpathPoint(this.x, this.y);
     }
@@ -34,14 +27,14 @@ class SubPath {
         this.points = points
     }
 
-    convertToAbsCoords(width, height) {
-       this.points.forEach(point => point.convertToAbsCoords(width, height));
-    }
-
-    getImgMapCoords() {
+    getImgMapCoords(restrictWidth, restrictHeight) {
         const coords = [];
+        const limitValue = (value, from, to) => value < from ? from : (value > to ? to : value);
         for (let point of this.points) {
-            coords.push(point.x, point.y);
+            coords.push(
+                restrictWidth ? limitValue(point.x, 0, restrictWidth) : point.x,
+                restrictHeight ? limitValue(point.y, 0, restrictHeight) : point.y
+            );
         }
         return coords;
     }
@@ -59,10 +52,6 @@ class SubPath {
 class Path {
     constructor(subPathes) {
         this.subPathes = subPathes;
-    }
-
-    convertToAbsCoords(width, height) {
-        this.subPathes.forEach(subpath => subpath.convertToAbsCoords(width, height));
     }
 
     copy() {

@@ -1,17 +1,27 @@
 import React, {useState} from "react";
-import ResizeableImageMapper from "./ResizeableImageMapper";
+import OverlayedImageMapper from "./OverlayedImageMapper";
 import collageSourcesSet from "../models/collageSourcesSet";
-import imgLoadingEvents from "../models/imgLoadingEvents";
+import imgLoadingEvents from "../hooks/imgLoadingEvents";
 import TeapotSpinner from "./TeapotSpinner";
+import {ImageMapperArea} from "./ImageMapper";
 
-function OldCollageImageMapper(props) {
-    const [containerRef, setContainerRef] = useState(null);
-    const [overlayLayerId, setOverlayLayerId] = useState(null);
+export interface CollageProps {
+
+}
+
+function Collage(props) {
+    const [containerRef, setContainerRef] = useState<HTMLDivElement|null>(null);
+    const [overlayLayerId, setOverlayLayerId] = useState<string|undefined>();
     const [collageSources, setCollageSources] = useState(collageSourcesSet.getSources('medium'));
+    if (!collageSources) {
+        throw new Error('No sources');
+    }
 
-    const onAreaClick = area => setOverlayLayerId(area.group);
-    const onOverlayLeave = () => setOverlayLayerId(null);
-    const onOverlayClick = (area) => {};
+    const onAreaClick = (area: ImageMapperArea) => {
+        area.group && setOverlayLayerId(area.group);
+    }
+    const onOverlayLeave = () => setOverlayLayerId(undefined);
+    const onOverlayClick = (overlayLayerId: string) => {};
 
     const changeSize = () => {
         setCollageSources(collageSourcesSet.getSources('large'));
@@ -19,30 +29,26 @@ function OldCollageImageMapper(props) {
 
     const imagesLoadingHandler = imgLoadingEvents();
 
-    const teapotSpinner = imagesLoadingHandler.isLoading
+    const teapotSpinner: JSX.Element|undefined = imagesLoadingHandler.isLoading
         ? <TeapotSpinner preview={imagesLoadingHandler.isPreview} />
-        : '';
+        : undefined;
 
     const imageMapper = containerRef
-        ? <ResizeableImageMapper
+        ? <OverlayedImageMapper
             collageSources={collageSources}
+            areasMap={collageSourcesSet.getAreasMap()}
             overlayLayerId={overlayLayerId}
-            src={collageSources.getBackgroundUrl(false)}
-            previewSrc={collageSources.getBackgroundUrl(true)}
             fitToElement={containerRef}
-            imgWidth={collageSources.full.background.width}
-            imgHeight={collageSources.full.background.height}
             strokeColor="white"
             lineWidth={3}
             fillColor="rgba(0, 0, 0, 0.3)"
-            map={collageSources.full.imgAreasMap}
             onClick={onAreaClick}
             onOverlayLeave={onOverlayLeave}
             onOverlayClick={onOverlayClick}
-            {...imagesLoadingHandler.eventHandlers}
+            loadEvents={imagesLoadingHandler.eventHandlers}
         >
             {teapotSpinner}
-        </ResizeableImageMapper>
+        </OverlayedImageMapper>
         : '';
 
     return (
@@ -55,4 +61,4 @@ function OldCollageImageMapper(props) {
     );
 }
 
-export default OldCollageImageMapper;
+export default Collage;

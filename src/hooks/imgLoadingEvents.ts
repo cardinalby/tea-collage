@@ -1,12 +1,18 @@
 import {useState} from "react";
 
-class ImgEventHandlers {
+export interface ImgProEventHandlers {
     onLoad;
     onLoading;
     onError;
 }
 
-export default function ImgLoadingEvents() {
+export interface ImgProLoadingEvents {
+    eventHandlers: ImgProEventHandlers,
+    isLoading: boolean;
+    isPreview: boolean;
+}
+
+export default function ImgLoadingEvents(): ImgProLoadingEvents {
     const [loadingFull, setLoadingFull] = useState(new Set());
     const [loadingPreview, setLoadingPreview] = useState(new Set());
 
@@ -14,7 +20,6 @@ export default function ImgLoadingEvents() {
     const setLoading = (preview, img) => preview ? setLoadingPreview(img) : setLoadingFull(img);
 
     const addLoading = (component, preview) => {
-        console.log('addloading', component, preview);
         const loading = getLoading(preview);
         if (!loading.has(component)) {
             loading.add(component);
@@ -23,7 +28,6 @@ export default function ImgLoadingEvents() {
     }
 
     const deleteLoading = (component, preview) => {
-        console.log('deleteLoading', component, preview);
         const loading = getLoading(preview);
         if (loading.has(component)) {
             loading.delete(component);
@@ -32,7 +36,7 @@ export default function ImgLoadingEvents() {
     }
 
     return {
-        eventHandlers: Object.assign(new ImgEventHandlers(), {
+        eventHandlers: {
             onLoad: (target, preview, component) => {
                 deleteLoading(component, preview);
                 if (!preview) {
@@ -41,7 +45,7 @@ export default function ImgLoadingEvents() {
             },
             onLoading: (target, preview, component) => addLoading(component, preview),
             onError: (target, preview, component) => deleteLoading(component, preview)
-            }),
+            },
         isLoading: loadingFull.size > 0 || loadingPreview.size > 0,
         isPreview: loadingPreview.size > 0
     }
