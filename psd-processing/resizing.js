@@ -1,11 +1,11 @@
 const sharp = require('sharp');
 const os = require('os');
-const v8 = require('v8');
 
 /**
  * @param srcFilePath
  * @param targetFilePath
  * @param scale
+ * @param {Object} options
  * @param {boolean|number|undefined} options.jpeg
  * @param {boolean|undefined} options.grayscale
  * @return {Promise<*>}
@@ -37,7 +37,10 @@ async function resizeFile(srcFilePath, targetFilePath, scale, options) {
 
     return img
         .toFile(targetFilePath)
-        .then(() => process.stdout.write('done' + os.EOL));
+        .then(() => {
+            process.stdout.write('done' + os.EOL);
+            return targetFilePath;
+        });
 }
 
 /**

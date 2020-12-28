@@ -98,9 +98,11 @@ async function saveResizedBackground(psdResult, psdResultResized, preview, destD
     }
     await fs.remove(consts.EXTRACTED_DIR);
 
+    process.stdout.write(`Writing ${consts.COLLAGE_INFO_SIZES_JSON}...`);
     await fs.writeJson(
         path.join(consts.COLLAGE_INFO_DIR, consts.COLLAGE_INFO_SIZES_JSON),
         psdConfig.targetSizes
     );
+    process.stdout.write('done' + os.EOL)
 })();
 

@@ -14,6 +14,14 @@ class SubpathPoint {
         this.y = y;
     }
 
+    /**
+     * @param {object} obj
+     * @return SubpathPoint
+     */
+    static deserialize(obj) {
+        return new SubpathPoint(obj.x, obj.y);
+    }
+
     copy() {
         return new SubpathPoint(this.x, this.y);
     }
@@ -25,6 +33,14 @@ class SubpathPoint {
 class SubPath {
     constructor(points) {
         this.points = points
+    }
+
+    /**
+     * @param {object} obj
+     * @return SubPath
+     */
+    static deserialize(obj) {
+        return new SubPath(obj.points.map(point => SubpathPoint.deserialize(point)));
     }
 
     getImgMapCoords(restrictWidth, restrictHeight) {
@@ -52,6 +68,14 @@ class SubPath {
 class Path {
     constructor(subPathes) {
         this.subPathes = subPathes;
+    }
+
+    /**
+     * @param {object} obj
+     * @return Path
+     */
+    static deserialize(obj) {
+        return new Path(obj.subPathes.map(subPath => SubPath.deserialize(subPath)));
     }
 
     copy() {
@@ -104,3 +128,6 @@ function parsePaths(paths) {
 }
 
 exports.parsePaths = parsePaths;
+exports.SubPath = SubPath;
+exports.Path = Path;
+exports.SubpathPoint = SubpathPoint;

@@ -1,4 +1,5 @@
 const areasConfig = require('../resources/img-areas-config.json');
+const SubPath = require('./psdPath').SubPath;
 
 /**
  * @property shape

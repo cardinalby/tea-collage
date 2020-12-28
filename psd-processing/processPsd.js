@@ -59,7 +59,9 @@ async function processPsd(
 
     const overlayGroupDir = sanitizeFilename(overlayGroup[0].name);
     fs.ensureDir(path.join(extractionDir, overlayGroupDir));
-    const layers = await extractLayers.extractFromGroup(overlayGroup[0], extractionDir, overlayGroupDir);
+    const layers = await extractLayers.extractFromGroup(
+        overlayGroup[0], extractionDir, overlayGroupDir, psdFilePath
+    );
 
     return new PsdProcessingResult(
         layers,

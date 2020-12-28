@@ -1,7 +1,6 @@
 const os = require('os');
-const path = require('path');
-const sanitizeFilename = require("sanitize-filename");
-const psdPath = require('./psdPath')
+const psdPath = require('./psdPath');
+const workerThreads = require('node-worker-threads-pool');
 
 /**
  * @property fileName
@@ -24,6 +23,16 @@ class LayerInfo {
         this.maskPath = maskPath;
     }
 
+    /**
+     * @param {object} obj
+     * @return LayerInfo
+     */
+    static deserialize(obj) {
+        return Object.assign(new LayerInfo(), obj, {
+            maskPath: obj.maskPath && psdPath.Path.deserialize(obj.maskPath)
+        });
+    }
+
     copy() {
         return Object.assign(new LayerInfo(), this, {
             maskPath: this.maskPath && this.maskPath.copy()
@@ -31,35 +40,42 @@ class LayerInfo {
     }
 }
 
-async function extractFromGroup(group, extractionDir, groupDir) {
+async function extractFromGroup(group, extractionDir, groupDir, psdFilePath) {
     const layers = group.children().filter(layer => layer.type === 'layer');
     if (!checkNamesAreUnique(layers)) {
         return null;
     }
 
-    const layerInfos = [];
-    for (const layer of layers) {
-        const vectorMask = layer.get('vectorMask');
-        if (!vectorMask) {
-            throw new Error(`Overlay layer ${layer.name} doesn't have vector mask`);
-        }
-        const fileName = sanitizeFilename(layer.name) + '.png';
-        const layerInfo = new LayerInfo(
-            path.join(groupDir, fileName),
-            layer.name,
-            layer.left,
-            layer.top,
-            layer.width,
-            layer.height,
-            psdPath.parsePaths(vectorMask.export().paths)
-        );
+    const staticPool = new workerThreads.StaticPool({
+        size: os.cpus().length,
+        task: './psd-processing/workerTasks/layerExtracting.js'
+    });
+    const tasks = layers.map(layer =>
+        staticPool
+            .exec({
+                psdFilePath: psdFilePath,
+                layerPath: group.name + '/' + layer.name,
+                extractionDir: extractionDir,
+                groupDir: groupDir
+            })
+            .then(result => {
+                if (typeof result === 'string') {
+                    throw new Error(result);
+                }
+                return LayerInfo.deserialize(result)
+            })
+    )
 
-        process.stdout.write(`Extracting ${layer.name} layer to ${layerInfo.fileName}...`);
-        await layer.layer.image.saveAsPng(path.join(extractionDir, layerInfo.fileName));
-        process.stdout.write('done' + os.EOL);
-        layerInfos.push(layerInfo);
+    try {
+        return await Promise.all(tasks);
     }
-    return layerInfos;
+    catch (e) {
+        console.error('Extracting process finished with ' + e.toString())
+        process.exit(0);
+    }
+    finally {
+        await staticPool.destroy();
+    }
 }
 
 function checkNamesAreUnique(layers) {
