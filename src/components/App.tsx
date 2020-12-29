@@ -1,5 +1,7 @@
 import '../css/app.css';
 import '../css/spinner.css';
+import '../css/overlay.css';
+
 import React from "react";
 import Collage from "./Collage";
 

@@ -145,7 +145,6 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
     };
 
     getScaledMap = memoize((map: ImageMapperMap, width: number, height: number): ImageMapperMap => {
-        console.log('scaling..');
         const scaleCoords = (coords: number[], width: number, height: number): number[] =>
             coords.map((coord, index) =>
                 index % 2

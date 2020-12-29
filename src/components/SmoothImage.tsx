@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
+import {classNames} from "../models/utils";
 
 export type SmoothImageEvent = (target: HTMLImageElement, preview: boolean, component: any) => void;
 
@@ -65,7 +66,6 @@ export function SmoothImage(props: SmoothImageProps) {
         }
         const imgRef = (preview ? previewImg : fullImg);
         if (!imgRef.current) {
-            console.log('on loading', node, preview);
             loadEvents.onLoading(node, preview, componentId);
         }
         imgRef.current = node;
@@ -83,7 +83,6 @@ export function SmoothImage(props: SmoothImageProps) {
     }}, []);
 
     const onImgLoad = (event, preview) => {
-        console.log('on load', event.target, preview);
         loadEvents.onLoad(event.target as HTMLImageElement, preview, componentId);
         if (!willUnmount.current) {
             preview ? setPreviewLoaded(true) : setFullLoaded(true);
@@ -95,15 +94,8 @@ export function SmoothImage(props: SmoothImageProps) {
     }
 
     const {style, className, ...otherImgProps} = (props.imgProps || {});
-    const addClassName = (value: string|string[]): string => {
-        const original = props.imgProps && props.imgProps.className;
-        const adding = Array.isArray(value)
-            ? value.filter(v => v).join(' ')
-            : value;
-        return typeof (original) === 'string'
-            ? original + ' ' + adding
-            : adding;
-    }
+    const addClassName = (value: string|undefined|(string|undefined)[]): string =>
+        classNames(props.imgProps && props.imgProps.className, value);
 
     return(
         <div>

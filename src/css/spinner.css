@@ -4,6 +4,17 @@
     left: 50%;
     transform: translateY(-50%) translateX(-50%);
     position: absolute;
+    pointer-events: none;
+}
+
+.teapot-spinner.active {
+    opacity: 100%;
+    transition: opacity 0.5s;
+}
+
+.teapot-spinner.hidden {
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
 .teapot-spinner img {
@@ -13,7 +24,6 @@
 
 .teapot-spinner.preview img {
     filter: grayscale(100%) brightness(1.5);;
-
 }
 
 @keyframes zoom {

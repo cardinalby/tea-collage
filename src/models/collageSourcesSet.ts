@@ -51,13 +51,17 @@ export class CollageSources {
     }
 
     public getOverlayDimensions(id: string, preview: boolean = false): OverlayDimensions {
-        const collageItem = (preview ? this.preview : this.full).overlayItems[id];
+        const collageItem = this.getCollageInfo(preview).overlayItems[id];
         return collageItem && new OverlayDimensions(
             collageItem.left,
             collageItem.top,
             collageItem.width,
             collageItem.height
         );
+    }
+
+    public getCollageInfo(preview: boolean): CollageInfo {
+        return preview ? this.preview : this.full;
     }
 
     /**
@@ -68,7 +72,7 @@ export class CollageSources {
     _getInfo(preview: boolean) {
         return {
             dir: preview ? this.previewName : this.fullName,
-            collage: preview ? this.preview : this.full
+            collage: this.getCollageInfo(preview)
         }
     }
 }
@@ -105,7 +109,7 @@ class CollageSourcesSet {
         return Array.from(this.sizesMap.values());
     }
 
-    public getSources(setName: string): CollageSources|undefined {
+    public getSources(setName: string): CollageSources {
         if (this.sizesMap.has(setName)) {
             return new CollageSources(
                 setName,
@@ -114,7 +118,7 @@ class CollageSourcesSet {
                 require(`../collage-info/${this.previewSize.name}.json`),
             )
         }
-        return undefined;
+        throw new Error('invalid setName = ' + setName);
     }
 
     public getAreasMap(): ImageMapperMap {

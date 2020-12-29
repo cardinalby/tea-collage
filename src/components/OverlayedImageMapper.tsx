@@ -6,11 +6,7 @@ import ImageMapper, {
     ImageMapperStyleProps
 } from "./ImageMapper";
 import {CollageSources} from "../models/collageSourcesSet";
-
-interface Size {
-    width: number,
-    height: number
-}
+import {Size, useElementSize} from "../hooks/useElementSize";
 
 interface OverlayedImageMapperProps extends
     ImageMapperStyleProps,
@@ -44,25 +40,6 @@ function getImageMapperProps(
             .filter(key => !selfPropNames.has(key))
             .map(key => [key, props[key]])
     ) as ImageMapperProps;
-}
-
-function useElementSize(element: HTMLElement): Size {
-    const [size, setSize] = useState<Size>({
-        width: element.clientWidth,
-        height: element.clientHeight
-    });
-    useLayoutEffect(() => {
-        function updateSize() {
-            setSize({
-                width: element.clientWidth,
-                height: element.clientHeight
-            });
-        }
-        window.addEventListener('resize', updateSize);
-        updateSize();
-        return () => window.removeEventListener('resize', updateSize);
-    }, [element]);
-    return size;
 }
 
 function calculateImgSize(containerSize: Size, imgSize: Size): Size {

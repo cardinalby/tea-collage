@@ -12,7 +12,7 @@ export interface ImgProLoadingEvents {
     isPreview: boolean;
 }
 
-export default function ImgLoadingEvents(): ImgProLoadingEvents {
+export default function useImgLoadingEvents(): ImgProLoadingEvents {
     const [loadingFull, setLoadingFull] = useState(new Set());
     const [loadingPreview, setLoadingPreview] = useState(new Set());
 

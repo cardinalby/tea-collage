@@ -34,7 +34,11 @@ function OverlayLayer(props: OverlayLayerProps)
             const rect = event.target.getBoundingClientRect();
             const x = (event.clientX - rect.left) * event.target.naturalWidth / event.target.clientWidth;
             const y = (event.clientY - rect.top) * event.target.naturalHeight / event.target.clientHeight;
+            console.log('isTr', event.target,
+                ctx.getImageData(x, y, 1, 1).data
+            )
             return ctx.getImageData(x, y, 1, 1).data[3] === 0;
+
         }
         return false;
     }
