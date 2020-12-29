@@ -12,7 +12,6 @@ function TeapotSpinner(props: TeapotSpinnerProps) {
         props.preview && 'preview',
         props.active ? 'active' : 'hidden'
     );
-    console.log(className);
     return (
         <div className={className}>
             <img src={process.env.PUBLIC_URL + 'favicon.png'} alt={'Loading...'}/>

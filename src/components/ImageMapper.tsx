@@ -19,6 +19,7 @@ export interface ImageMapperArea {
     fillColor?: string,
     lineWidth?: number,
     strokeColor?: string
+    preFillStrokeColor?: string
 }
 
 export interface ImageMapperMap {
@@ -33,7 +34,9 @@ export interface ImageMapperSizeProps {
 
 export interface ImageMapperStyleProps {
     fillColor?: string,
-    strokeColor?: string
+    strokeColor?: string,
+    preFillColor?: string,
+    preFillStrokeColor?: string,
     lineWidth?: number,
     imgClassName?: string
 }
@@ -84,7 +87,7 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
             areas: [],
             name: "image-map-" + Math.random()
         },
-        strokeColor: "rgba(0, 0, 0, 0.5)"
+        strokeColor: "rgba(0, 0, 0, 1)"
     };
 
     styles = {
@@ -166,7 +169,6 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
             case "poly": return this.drawPoly;
             case "rect": return this.drawRect;
         }
-        return undefined;
     }
 
     protected drawRect(ctx: CanvasRenderingContext2D, coords, fillColor, lineWidth, strokeColor) {
@@ -225,7 +227,7 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
             throw new Error("Can't get 2d context");
         }
         this.ctx.fillStyle = this.props.fillColor || '';
-        this.renderPrefilledAreas();
+        this.renderPrefilledAreas(this.ctx);
     }
 
     protected hoverOn(area: ImageMapperArea, index, event) {
@@ -254,7 +256,7 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         if (this.props.active && this.ctx && this.canvas) {
             this.selectedArea = undefined;
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.renderPrefilledAreas();
+            this.renderPrefilledAreas(this.ctx);
         }
 
         if (this.props.onMouseLeave) this.props.onMouseLeave(area, index, event);
@@ -290,16 +292,18 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         this.loadEvents.onLoad(target, preview, component);
     }
 
-    protected renderPrefilledAreas() {
+    protected renderPrefilledAreas(ctx: CanvasRenderingContext2D) {
         this.getScaledMap(this.props.map, this.props.width, this.props.height)
             .areas
             .filter(area => area.preFillColor)
             .forEach(area => {
-                this["draw" + area.shape](
+                const drawMethod = this.getDrawMethod(area.shape);
+                drawMethod && drawMethod(
+                    ctx,
                     area.coords,
-                    area.preFillColor,
-                    area.lineWidth || this.props.lineWidth,
-                    area.strokeColor || this.props.strokeColor
+                    area.preFillColor as string,
+                    area.lineWidth || this.props.lineWidth || ImageMapper.defaultProps.lineWidth,
+                    area.preFillStrokeColor || this.props.preFillStrokeColor || ImageMapper.defaultProps.strokeColor
                 );
             });
     }

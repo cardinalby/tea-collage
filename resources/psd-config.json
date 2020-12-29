@@ -7,6 +7,6 @@
   "targetSizes": [
     { "name": "large", "width": 2000 },
     { "name": "medium", "width": 1024 },
-    { "name": "preview", "width": 300, "preview": true }
+    { "name": "preview", "width": 350, "preview": true }
   ]
 }
