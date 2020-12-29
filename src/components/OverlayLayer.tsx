@@ -1,31 +1,30 @@
-import React, {useEffect, useState} from 'react';
-import {ImgPro} from "./ImgPro";
+import React, {useState} from 'react';
 import {OverlayDimensions} from "../models/collageSourcesSet";
-import {ImgProLoadEvents, ImgProLoadEventsWrapper} from "./ImgPro/ImgProLoadEvents";
+import {SmoothImageLoadEvents, SmoothImageLoadEventsWrapper, SmoothImage} from "./SmoothImage";
 
 interface OverlayLayerProps {
     src: string,
     previewSrc: string,
     dimensions: OverlayDimensions
-    loadEvents: ImgProLoadEvents,
+    loadEvents: SmoothImageLoadEvents,
     onFilledAreaLeave: (event) => void,
     onFilledAreaClick: (event) => void
 }
 
 function OverlayLayer(props: OverlayLayerProps)
 {
-    const loadEvents = new ImgProLoadEventsWrapper(props.loadEvents)
+    const loadEvents = new SmoothImageLoadEventsWrapper(props.loadEvents)
     const [ctx, setCtx] = useState<CanvasRenderingContext2D|undefined>();
 
     const onImageLoad = (target, preview, component) => {
         const canvas = document.createElement('canvas');
-        canvas.width = target.width;
-        canvas.height = target.height;
+        canvas.width = target.naturalWidth;
+        canvas.height = target.naturalHeight;
         const ctx = canvas.getContext('2d');
         if (!ctx) {
             throw new Error("Can't get 2d context");
         }
-        ctx.drawImage(target, 0, 0, target.width, target.height);
+        ctx.drawImage(target, 0, 0, canvas.width, canvas.height);
         setCtx(ctx);
         loadEvents.onLoad(target, preview, component);
     };
@@ -61,7 +60,7 @@ function OverlayLayer(props: OverlayLayerProps)
     return (
         <div className={'collage-overlay-container'}>
             <div style={{position: 'absolute', width: '100%', height: '100%'}}>
-                <ImgPro
+                <SmoothImage
                     src={props.src}
                     previewSrc={props.previewSrc}
                     loadEvents={{

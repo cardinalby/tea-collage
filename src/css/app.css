@@ -37,6 +37,32 @@
   }
 }
 
+.smooth-img.ready {
+  opacity: 100%;
+}
+
+.smooth-img.preview.init {
+  opacity: 0;
+}
+
+.smooth-img.preview.loading {
+  opacity: 100%;
+  filter: blur(2px);
+  transition: opacity 1s;
+}
+
+.smooth-img.full.loading {
+  opacity: 80%;
+}
+
+.smooth-img.full {
+  transition: opacity 0.5s;
+}
+
+.smooth-img.ready {
+  transition: all 0.5s;
+}
+
 .collage-container {
   margin: auto;
   justify-content: center;
@@ -45,7 +71,7 @@
 }
 
 .collage-bg-active {
-  transition: all 0.2s ease;
+  transition: filter 0.5s ease;
 }
 
 .collage-bg-inactive {
@@ -71,3 +97,8 @@
           drop-shadow(2px -2px 0 black)
           drop-shadow(-2px -2px 0 black);
 }
+
+.collage-overlay-img.smooth-img.loading {
+  filter: none;
+}
+

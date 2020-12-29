@@ -1,8 +1,7 @@
 import React, {Component, CSSProperties, MouseEventHandler} from "react";
 import isEqual from "react-fast-compare";
 import memoize from "memoize-one";
-import {ImgPro} from "./ImgPro";
-import {ImgProLoadEvents, ImgProLoadEventsWrapper} from "./ImgPro/ImgProLoadEvents";
+import {SmoothImageLoadEvents, SmoothImageLoadEventsWrapper, SmoothImage} from "./SmoothImage";
 
 export type ImageMapperMouseEvent = (
     area: ImageMapperArea,
@@ -51,7 +50,7 @@ export interface ImageMapperBehaviorProps {
     onClick?: ImageMapperMouseEvent,
     onMouseMove?: ImageMapperMouseEvent,
     onImageClick?: MouseEventHandler<HTMLImageElement>,
-    loadEvents: ImgProLoadEvents,
+    loadEvents: SmoothImageLoadEvents,
     onMouseEnter?: ImageMapperMouseEvent,
     onMouseLeave?: ImageMapperMouseEvent,
 }
@@ -63,9 +62,7 @@ export interface ImageMapperProps extends
     ImageMapperBehaviorProps
 {}
 
-interface ImageMapperState {
-    map: ImageMapperMap
-}
+interface ImageMapperState {}
 
 type ShapeName = 'poly'|'circle'|'rect';
 
@@ -76,19 +73,6 @@ type DrawMethod = (
     lineWidth: number,
     strokeColor: string
 ) => void;
-
-const watchedProps = [
-    "active",
-    "fillColor",
-    "height",
-    "imgWidth",
-    "imgHeight",
-    "lineWidth",
-    "imgClassName",
-    "src",
-    "strokeColor",
-    "width"
-];
 
 export default class ImageMapper extends Component<ImageMapperProps, ImageMapperState> {
 
@@ -124,12 +108,12 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         map: undefined as undefined | any
     }
 
-    selectedArea?: string;
+    selectedArea?: ImageMapperArea;
     canvas: HTMLCanvasElement|null = null;
     ctx: CanvasRenderingContext2D|null = null;
     container: HTMLDivElement|null = null;
     img: HTMLImageElement|null = null;
-    loadEvents = new ImgProLoadEventsWrapper();
+    loadEvents = new SmoothImageLoadEventsWrapper();
 
     constructor(props) {
         super(props);
@@ -141,44 +125,41 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
             "renderPrefilledAreas"
         ].forEach(f => (this[f] = this[f].bind(this)));
         this.styles.map = props.onClick && { cursor: "pointer" };
-        this.state = {
-            map: this.props.map
-        }
     }
 
-    getGroups = memoize(areas => {
+    getGroups() {
+        const scaledMap = this.getScaledMap(this.props.map, this.props.width, this.props.height);
         const groups = new Map<string, ImageMapperArea[]>();
-        areas
+        scaledMap.areas
             .filter(area => area.group)
             .forEach(area => {
-                    const areas = groups.get(area.group);
+                    const areas = groups.get(area.group as string);
                     if (areas) {
                         areas.push(area)
                     } else {
-                        groups.set(area.group, [area])
+                        groups.set(area.group as string, [area])
                     }
                 }
             )
         return groups;
-    });
+    };
 
-    shouldComponentUpdate(nextProps, nextState) {
-        const propChanged = watchedProps.some(
-            prop => !isEqual(this.props[prop], nextProps[prop])
-        );
-        return propChanged || !isEqual(this.props.map, this.state.map)
-    }
-
-    protected updateCacheMap() {
-        this.setState({
-            map: JSON.parse(JSON.stringify(this.props.map))
-        });
-    }
-
-    componentDidUpdate(prevProps) {
-        this.updateCacheMap();
-        // this.initCanvas();
-    }
+    getScaledMap = memoize((map: ImageMapperMap, width: number, height: number): ImageMapperMap => {
+        console.log('scaling..');
+        const scaleCoords = (coords: number[], width: number, height: number): number[] =>
+            coords.map((coord, index) =>
+                index % 2
+                    ? coord * height // vertical coord
+                    : coord * width // horizontal coord
+            );
+        return {
+            name: map.name,
+            areas: map.areas.map(area => ({
+                ...area,
+                coords: scaleCoords(area.coords, width, height)
+            }))
+        };
+    }, isEqual) ;
 
     protected getDrawMethod(shape: ShapeName): DrawMethod|undefined {
         switch (shape) {
@@ -248,16 +229,16 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         this.renderPrefilledAreas();
     }
 
-    protected hoverOn(area, index, event) {
+    protected hoverOn(area: ImageMapperArea, index, event) {
         if (this.props.active && this.ctx) {
-            const groups = this.getGroups(this.props.map.areas)
+            const groups = this.getGroups()
             this.selectedArea = area;
-            const groupAreas = groups.get(area.group) || [];
+            const groupAreas = (area.group && groups.get(area.group)) || [];
             for (const groupArea of groupAreas) {
                 const drawMethod = this.getDrawMethod(groupArea.shape);
                 drawMethod && drawMethod(
                     this.ctx,
-                    this.scaleCoordsToAbsValues(groupArea.coords),
+                    groupArea.coords,
                     groupArea.fillColor || this.props.fillColor || ImageMapper.defaultProps.fillColor,
                     groupArea.lineWidth || this.props.lineWidth || ImageMapper.defaultProps.lineWidth,
                     groupArea.strokeColor || this.props.strokeColor || ImageMapper.defaultProps.strokeColor
@@ -303,27 +284,20 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         }
     }
 
-    protected onImgLoaded(target: HTMLImageElement, preview: boolean, component: ImgPro) {
+    protected onImgLoaded(target: HTMLImageElement, preview: boolean, component: any) {
         if (this.canvas && this.container) {
             this.initCanvas(this.canvas, this.container);
         }
         this.loadEvents.onLoad(target, preview, component);
     }
 
-    protected scaleCoordsToAbsValues(coords: number[]) {
-        return coords.map((coord, index) =>
-            index % 2
-                ? coord * this.props.height // vertical coord
-                : coord * this.props.width // horizontal coord
-        );
-    }
-
     protected renderPrefilledAreas() {
-        this.state.map.areas
+        this.getScaledMap(this.props.map, this.props.width, this.props.height)
+            .areas
             .filter(area => area.preFillColor)
             .forEach(area => {
                 this["draw" + area.shape](
-                    this.scaleCoordsToAbsValues(area.coords),
+                    area.coords,
                     area.preFillColor,
                     area.lineWidth || this.props.lineWidth,
                     area.strokeColor || this.props.strokeColor
@@ -331,53 +305,28 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
             });
     }
 
-    protected computeCenter(area) {
-        if (!area) return [0, 0];
-
-        const scaledCoords = this.scaleCoordsToAbsValues(area.coords);
-
-        switch (area.shape) {
-            case "circle":
-                return [scaledCoords[0], scaledCoords[1]];
-            case "poly":
-            case "rect":
-            default: {
-                // Calculate centroid
-                const n = scaledCoords.length / 2;
-                const { y, x } = scaledCoords.reduce(
-                    ({ y, x }, val, idx) => {
-                        return !(idx % 2) ? { y, x: x + val / n } : { y: y + val / n, x };
-                    },
-                    { y: 0, x: 0 }
-                );
-                return [x, y];
-            }
-        }
-    }
-
     renderAreas() {
-        return this.state.map.areas.map((area, index) => {
-            const scaledCoords = this.scaleCoordsToAbsValues(area.coords);
-            const center = this.computeCenter(area);
-            const extendedArea = { ...area, scaledCoords, center };
-            return (
-                <area
-                    alt={area.group || area._id || index.toString()}
-                    key={area._id || index}
-                    shape={area.shape}
-                    coords={scaledCoords.join(",")}
-                    onMouseEnter={this.hoverOn.bind(this, extendedArea, index)}
-                    onMouseLeave={this.hoverOff.bind(this, extendedArea, index)}
-                    onMouseMove={this.mouseMove.bind(this, extendedArea, index)}
-                    onClick={this.click.bind(this, extendedArea, index)}
-                    href={area.href}
-                />
-            );
-        });
+        return this.getScaledMap(this.props.map, this.props.width, this.props.height)
+            .areas
+            .map((area: ImageMapperArea, index) => {
+                return (
+                    <area
+                        alt={area.group || area._id || index.toString()}
+                        key={area._id || index}
+                        shape={area.shape}
+                        coords={area.coords.join(",")}
+                        onMouseEnter={this.hoverOn.bind(this, area, index)}
+                        onMouseLeave={this.hoverOff.bind(this, area, index)}
+                        onMouseMove={this.mouseMove.bind(this, area, index)}
+                        onClick={this.click.bind(this, area, index)}
+                        href={area.href}
+                    />
+                );
+            });
     }
 
     render() {
-        this.loadEvents = new ImgProLoadEventsWrapper(this.props.loadEvents);
+        this.loadEvents = new SmoothImageLoadEventsWrapper(this.props.loadEvents);
         return (
             <div style={{
                     ...this.styles.container,
@@ -386,7 +335,7 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
                 }}
                  ref={node => (this.container = node)}
             >
-                <ImgPro
+                <SmoothImage
                     src={this.props.src}
                     previewSrc={this.props.previewSrc}
                     imgRef={node => (this.img = node)}
@@ -397,12 +346,12 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
                     imgProps={{
                         style: this.styles.img,
                         className: this.props.imgClassName,
-                        useMap: `#${this.state.map.name}`,
+                        useMap: `#${this.props.map.name}`,
                         onClick: this.imageClick.bind(this)
                     }}
                 />
                 <canvas ref={node => (this.canvas = node)} style={this.styles.canvas} />
-                <map name={this.state.map.name} style={this.styles.map}>
+                <map name={this.props.map.name} style={this.styles.map}>
                     {this.renderAreas()}
                 </map>
             </div>
