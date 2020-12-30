@@ -130,22 +130,17 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         this.styles.map = props.onClick && { cursor: "pointer" };
     }
 
-    getGroups() {
-        const scaledMap = this.getScaledMap(this.props.map, this.props.width, this.props.height);
-        const groups = new Map<string, ImageMapperArea[]>();
-        scaledMap.areas
-            .filter(area => area.group)
-            .forEach(area => {
-                    const areas = groups.get(area.group as string);
-                    if (areas) {
-                        areas.push(area)
-                    } else {
-                        groups.set(area.group as string, [area])
-                    }
-                }
-            )
-        return groups;
-    };
+    componentDidUpdate(prevProps: Readonly<ImageMapperProps>, prevState: Readonly<ImageMapperState>, snapshot?: any) {
+        if ((
+            this.props.width !== prevProps.width ||
+            this.props.height !== prevProps.height ||
+            !isEqual(this.props.map, prevProps.map)
+            ) &&
+            this.canvas && this.container
+        ) {
+            this.initCanvas(this.canvas, this.container);
+        }
+    }
 
     getScaledMap = memoize((map: ImageMapperMap, width: number, height: number): ImageMapperMap => {
         const scaleCoords = (coords: number[], width: number, height: number): number[] =>
@@ -230,19 +225,26 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         this.renderPrefilledAreas(this.ctx);
     }
 
+    protected getAreasByGroup(group: string) {
+        return this.getScaledMap(this.props.map, this.props.width, this.props.height)
+            .areas
+            .filter(area => area.group === group);
+    };
+
     protected hoverOn(area: ImageMapperArea, index, event) {
         if (this.props.active && this.ctx) {
-            const groups = this.getGroups()
             this.selectedArea = area;
-            const groupAreas = (area.group && groups.get(area.group)) || [];
-            for (const groupArea of groupAreas) {
-                const drawMethod = this.getDrawMethod(groupArea.shape);
+            const areas = area.group
+                ? this.getAreasByGroup(area.group)
+                : [area];
+            for (const areaToDraw of areas) {
+                const drawMethod = this.getDrawMethod(areaToDraw.shape);
                 drawMethod && drawMethod(
                     this.ctx,
-                    groupArea.coords,
-                    groupArea.fillColor || this.props.fillColor || ImageMapper.defaultProps.fillColor,
-                    groupArea.lineWidth || this.props.lineWidth || ImageMapper.defaultProps.lineWidth,
-                    groupArea.strokeColor || this.props.strokeColor || ImageMapper.defaultProps.strokeColor
+                    areaToDraw.coords,
+                    areaToDraw.fillColor || this.props.fillColor || ImageMapper.defaultProps.fillColor,
+                    areaToDraw.lineWidth || this.props.lineWidth || ImageMapper.defaultProps.lineWidth,
+                    areaToDraw.strokeColor || this.props.strokeColor || ImageMapper.defaultProps.strokeColor
                 );
             }
         }

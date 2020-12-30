@@ -8,8 +8,7 @@
     top: 0;
 }
 
-.collage-overlay-img {
-    transition: visibility 0s linear 2300ms, opacity 2300ms;
+.collage-overlay-container img {
     position: absolute;
     transform-origin: top left;
     filter: drop-shadow(2px 2px 0 black)
@@ -18,10 +17,14 @@
     drop-shadow(-2px -2px 0 black);
 }
 
-.collage-overlay-img.smooth-img.loading {
+.collage-overlay-container img.smooth-img.loading {
     filter: none;
 }
 
-.collage-overlay-img.smooth-img.full.loading {
+.collage-overlay-container img.smooth-img.full.loading {
     pointer-events: none;
+}
+
+.collage-overlay-container img.smooth-img.full.loading {
+    opacity: 0;
 }

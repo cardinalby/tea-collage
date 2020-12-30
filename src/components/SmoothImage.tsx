@@ -80,6 +80,7 @@ export function SmoothImage(props: SmoothImageProps) {
             loadEvents.onError(fullImg.current, false, componentId);
         }
         willUnmount.current = true;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }}, []);
 
     const onImgLoad = (event, preview) => {

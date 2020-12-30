@@ -20,5 +20,10 @@ declare namespace generatedJson {
         overlayItems: Object<string, CollageItem>;
         background: BackgroundInfo;
     }
+
+    interface SourceSize {}
+
+
+    type ImageMap = ImageMapperArea;
 }
 

@@ -1,0 +1,15 @@
+.collage-container {
+    margin: auto;
+    justify-content: center;
+    width: 95%;
+    height: 95vh;
+}
+
+.collage-bg-active {
+    transition: filter 0.5s ease;
+}
+
+.collage-bg-inactive {
+    filter: grayscale(0.6) brightness(0.6);
+    transition: all 0.5s ease;
+}

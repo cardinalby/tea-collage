@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {OverlayDimensions} from "../models/collageSourcesSet";
 import {SmoothImageLoadEvents, SmoothImageLoadEventsWrapper, SmoothImage} from "./SmoothImage";
 
@@ -15,8 +15,12 @@ function OverlayLayer(props: OverlayLayerProps)
 {
     const loadEvents = new SmoothImageLoadEventsWrapper(props.loadEvents)
     const [ctx, setCtx] = useState<CanvasRenderingContext2D|undefined>();
+    const actualImg = useRef<{element: HTMLImageElement, preview: boolean}>();
 
     const onImageLoad = (target, preview, component) => {
+        if (!actualImg.current || actualImg.current.preview === preview || !preview) {
+            actualImg.current = { element: target, preview };
+        }
         const canvas = document.createElement('canvas');
         canvas.width = target.naturalWidth;
         canvas.height = target.naturalHeight;
@@ -34,22 +38,24 @@ function OverlayLayer(props: OverlayLayerProps)
             const rect = event.target.getBoundingClientRect();
             const x = (event.clientX - rect.left) * event.target.naturalWidth / event.target.clientWidth;
             const y = (event.clientY - rect.top) * event.target.naturalHeight / event.target.clientHeight;
-            console.log('isTr', event.target,
-                ctx.getImageData(x, y, 1, 1).data
-            )
             return ctx.getImageData(x, y, 1, 1).data[3] === 0;
 
         }
         return false;
     }
 
-    const onMouseMove = event => {
+    const onMouseMove = event  => {
         if (props.onFilledAreaLeave && isTransparentPoint(event)) {
             props.onFilledAreaLeave(event);
         }
     };
     const onMouseLeave = (event) => {
-        props.onFilledAreaLeave && props.onFilledAreaLeave(event);
+        if (props.onFilledAreaLeave &&
+            actualImg.current &&
+            event.target === actualImg.current.element
+        ) {
+            props.onFilledAreaLeave(event);
+        }
     }
     const onMouseClick = (event) => {
         if (props.onFilledAreaLeave || props.onFilledAreaClick) {
@@ -72,7 +78,7 @@ function OverlayLayer(props: OverlayLayerProps)
                         onLoad: onImageLoad
                     }}
                     imgProps={{
-                        className: 'collage-overlay-img',
+                        //className: 'collage-overlay-img',
                         style: {
                             left: props.dimensions.left,
                             top: props.dimensions.top,

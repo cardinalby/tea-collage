@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from "react";
+import React from "react";
 import OverlayLayer from "./OverlayLayer";
 import ImageMapper, {
     ImageMapperBehaviorProps, ImageMapperMap,

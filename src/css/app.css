@@ -47,12 +47,11 @@
 
 .smooth-img.preview.loading {
   opacity: 100%;
-  filter: blur(2px);
   transition: opacity 1s;
 }
 
 .smooth-img.full.loading {
-  opacity: 80%;
+  opacity: 50%;
 }
 
 .smooth-img.full {
@@ -61,21 +60,5 @@
 
 .smooth-img.ready {
   transition: all 0.5s;
-}
-
-.collage-container {
-  margin: auto;
-  justify-content: center;
-  width: 95%;
-  height: 95vh;
-}
-
-.collage-bg-active {
-  transition: filter 0.5s ease;
-}
-
-.collage-bg-inactive {
-  filter: grayscale(0.6) brightness(0.6);
-  transition: all 0.5s ease;
 }
 

@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import OverlayedImageMapper from "./OverlayedImageMapper";
 import collageSourcesSet from "../models/collageSourcesSet";
 import imgLoadingEvents from "../hooks/useImgLoadingEvents";
 import TeapotSpinner from "./TeapotSpinner";
 import {ImageMapperArea} from "./ImageMapper";
 import {useOverlayImagesPreloader} from "../hooks/useOverlayImagesPreloader";
+import {useParams} from 'react-router';
 
 export interface CollageProps {
 
@@ -16,11 +17,14 @@ function Collage(props) {
     const [collageSources, setCollageSources] = useState(collageSourcesSet.getSources('medium'));
     useOverlayImagesPreloader(collageSources, true, false);
 
+
     const onAreaClick = (area: ImageMapperArea) => {
         area.group && setOverlayLayerId(area.group);
     }
     const onOverlayLeave = () => setOverlayLayerId(undefined);
-    const onOverlayClick = (overlayLayerId: string) => {};
+    const onOverlayClick = (overlayLayerId: string) => {
+        setCollageSources(collageSourcesSet.getSources('large'))
+    };
 
     const changeSize = () => {
         setCollageSources(collageSourcesSet.getSources('large'));
