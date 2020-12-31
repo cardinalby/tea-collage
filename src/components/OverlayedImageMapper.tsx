@@ -6,7 +6,7 @@ import ImageMapper, {
     ImageMapperStyleProps
 } from "./ImageMapper";
 import {CollageSources} from "../models/collageSourcesSet";
-import {Size, useElementSize} from "../hooks/useElementSize";
+import {useFittedScale} from "../hooks/useFittedScale";
 
 interface OverlayedImageMapperProps extends
     ImageMapperStyleProps,
@@ -42,36 +42,27 @@ function getImageMapperProps(
     ) as ImageMapperProps;
 }
 
-function calculateImgSize(containerSize: Size, imgSize: Size): Size {
-    const imgProportions = imgSize.width / imgSize.height;
-    const parentProportions = containerSize.width / containerSize.height;
-    return imgProportions < parentProportions
-        ?   {
-                width: Math.round(containerSize.height * imgProportions),
-                height: containerSize.height
-            }
-        :   {
-                width: containerSize.width,
-                height: Math.round(containerSize.width / imgProportions)
-            };
-}
-
 function OverlayedImageMapper(props: OverlayedImageMapperProps)
 {
-    const containerSize = useElementSize(props.fitToElement);
-    const size = calculateImgSize(
-        containerSize,
-        {
-            width: props.collageSources.full.background.width,
-            height: props.collageSources.full.background.height
-        });
-    const scale = size.width / props.collageSources.full.background.width;
+    const scale = useFittedScale(
+        props.fitToElement,
+        props.collageSources.full.background.width,
+        props.collageSources.full.background.height
+        );
+
+    // Move outside the overlay
+    const onImageMapperMouseMove = () => {
+        if (props.onOverlayLeave && props.overlayLayerId) {
+            props.onOverlayLeave && props.onOverlayLeave(props.overlayLayerId);
+        }
+    }
 
     let overlay: JSX.Element|undefined = undefined;
     if (props.overlayLayerId !== undefined) {
         const overlayLayerId = props.overlayLayerId;
         overlay = (
             <OverlayLayer
+                layerId={props.overlayLayerId}
                 src={props.collageSources.getOverlayUrl(overlayLayerId)}
                 previewSrc={props.collageSources.getOverlayUrl(overlayLayerId, true)}
                 dimensions={props.collageSources.getOverlayDimensions(overlayLayerId).scale(scale)}
@@ -84,7 +75,8 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
 
     const imgMapperProps = {
         ...getImageMapperProps(props),
-        ...size,
+        width: props.collageSources.full.background.width * scale,
+        height: props.collageSources.full.background.height * scale,
         imgClassName: props.overlayLayerId ? 'collage-bg-inactive' : 'collage-bg-active'
     };
 
@@ -95,6 +87,7 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
                 previewSrc={props.collageSources.getBackgroundUrl(true)}
                 imgWidth={props.collageSources.full.background.width}
                 map={props.areasMap}
+                onMouseMove={onImageMapperMouseMove}
                 {...imgMapperProps}
             />
             {overlay}

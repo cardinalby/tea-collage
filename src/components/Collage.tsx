@@ -5,18 +5,16 @@ import imgLoadingEvents from "../hooks/useImgLoadingEvents";
 import TeapotSpinner from "./TeapotSpinner";
 import {ImageMapperArea} from "./ImageMapper";
 import {useOverlayImagesPreloader} from "../hooks/useOverlayImagesPreloader";
-import {useParams} from 'react-router';
 
 export interface CollageProps {
-
+    layerId?: string
 }
 
-function Collage(props) {
+function Collage(props: CollageProps) {
     const [containerRef, setContainerRef] = useState<HTMLDivElement|null>(null);
-    const [overlayLayerId, setOverlayLayerId] = useState<string|undefined>();
+    const [overlayLayerId, setOverlayLayerId] = useState<string|undefined>(props.layerId);
     const [collageSources, setCollageSources] = useState(collageSourcesSet.getSources('medium'));
     useOverlayImagesPreloader(collageSources, true, false);
-
 
     const onAreaClick = (area: ImageMapperArea) => {
         area.group && setOverlayLayerId(area.group);

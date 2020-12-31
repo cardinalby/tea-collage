@@ -3,12 +3,13 @@ import {OverlayDimensions} from "../models/collageSourcesSet";
 import {SmoothImageLoadEvents, SmoothImageLoadEventsWrapper, SmoothImage} from "./SmoothImage";
 
 interface OverlayLayerProps {
+    layerId?: string,
     src: string,
     previewSrc: string,
     dimensions: OverlayDimensions
     loadEvents: SmoothImageLoadEvents,
-    onFilledAreaLeave: (event) => void,
-    onFilledAreaClick: (event) => void
+    onFilledAreaLeave: (event, layerId?: string) => void,
+    onFilledAreaClick: (event, layerId?: string) => void
 }
 
 function OverlayLayer(props: OverlayLayerProps)
@@ -71,6 +72,7 @@ function OverlayLayer(props: OverlayLayerProps)
         <div className={'collage-overlay-container'}>
             <div style={{position: 'absolute', width: '100%', height: '100%'}}>
                 <SmoothImage
+                    componentId={props.layerId}
                     src={props.src}
                     previewSrc={props.previewSrc}
                     loadEvents={{

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {classNames} from "../models/utils";
 
 export type SmoothImageEvent = (target: HTMLImageElement, preview: boolean, component: any) => void;
@@ -26,6 +26,7 @@ export class SmoothImageLoadEventsWrapper implements SmoothImageLoadEvents {
 }
 
 export interface SmoothImageProps {
+    componentId?: string,
     imgRef?: (img: HTMLImageElement, preview: boolean) => void,
     src: string,
     previewSrc?: string,
@@ -33,14 +34,16 @@ export interface SmoothImageProps {
     loadEvents?: SmoothImageLoadEvents
 }
 
+let idCounter = 1;
+
 export function SmoothImage(props: SmoothImageProps) {
     const [fullLoaded, setFullLoaded] = useState(false);
     const [previewLoaded, setPreviewLoaded] = useState(false);
     const previewSrc = useRef<string|undefined>(undefined);
     const fullSrc = useRef<string|undefined>(undefined);
-    const componentId = useState(Symbol('smooth_image'))[0];
+    const componentId = useState(props.componentId || Symbol('smooth_image_' + idCounter++))[0];
 
-    const loadEvents = new SmoothImageLoadEventsWrapper(props.loadEvents);
+    const loadEvents = useMemo(() => new SmoothImageLoadEventsWrapper(props.loadEvents), [props.loadEvents]);
     const fullImg = useRef(undefined as HTMLImageElement|undefined);
     const previewImg = useRef(undefined as HTMLImageElement|undefined);
 
@@ -73,15 +76,19 @@ export function SmoothImage(props: SmoothImageProps) {
 
     const willUnmount = useRef(false);
     useEffect(() => { return () => {
-        if (!previewLoaded && previewImg.current) {
-            loadEvents.onError(previewImg.current, true, componentId);
-        }
-        if (!fullLoaded && fullImg.current) {
-            loadEvents.onError(fullImg.current, false, componentId);
-        }
         willUnmount.current = true;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }}, []);
+
+    useEffect(() => { return () => {
+        if (willUnmount.current) {
+            if (!previewLoaded && previewImg.current) {
+                loadEvents.onError(previewImg.current, true, componentId);
+            }
+            if (!fullLoaded && fullImg.current) {
+                loadEvents.onError(fullImg.current, false, componentId);
+            }
+        }
+    }}, [previewLoaded, fullLoaded, componentId, loadEvents]);
 
     const onImgLoad = (event, preview) => {
         loadEvents.onLoad(event.target as HTMLImageElement, preview, componentId);

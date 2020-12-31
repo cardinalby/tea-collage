@@ -7,12 +7,13 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-fast-compare": "^2.0.4",
-    "react-router": "^5.2.0"
+    "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.16",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/react-router-dom": "^5.1.7",
     "awesome-typescript-loader": "^5.2.1",
     "fs-extra": "^9.0.1",
     "psd": "^3.2.0",

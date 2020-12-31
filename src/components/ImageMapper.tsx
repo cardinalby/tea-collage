@@ -287,11 +287,11 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         }
     }
 
-    protected onImgLoaded(target: HTMLImageElement, preview: boolean, component: any) {
+    protected onImgLoaded(target: HTMLImageElement, preview: boolean, componentId: any) {
         if (this.canvas && this.container) {
             this.initCanvas(this.canvas, this.container);
         }
-        this.loadEvents.onLoad(target, preview, component);
+        this.loadEvents.onLoad(target, preview, componentId);
     }
 
     protected renderPrefilledAreas(ctx: CanvasRenderingContext2D) {
