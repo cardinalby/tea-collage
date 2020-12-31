@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import {classNames} from "../models/utils";
+import {classNames} from "../models/reactUtils";
 
 export type SmoothImageEvent = (target: HTMLImageElement, preview: boolean, component: any) => void;
 

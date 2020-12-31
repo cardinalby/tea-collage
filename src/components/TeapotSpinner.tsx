@@ -1,5 +1,5 @@
 import React from "react";
-import {classNames} from "../models/utils";
+import {classNames} from "../models/reactUtils";
 
 interface TeapotSpinnerProps {
     active: boolean

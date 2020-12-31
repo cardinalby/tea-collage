@@ -1,12 +1,8 @@
 import {useLayoutEffect, useState} from "react";
+import {Size2d} from "../models/point2d";
 
-export interface Size {
-    width: number,
-    height: number
-}
-
-export function useElementSize(element: HTMLElement): Size {
-    const [size, setSize] = useState<Size>({
+export function useElementSize(element: HTMLElement): Size2d {
+    const [size, setSize] = useState<Size2d>({
         width: element.clientWidth,
         height: element.clientHeight
     });
