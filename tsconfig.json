@@ -23,6 +23,7 @@
     "noEmit": true
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    "./resourcesProcessing/types/**/*.d.ts"
   ]
 }

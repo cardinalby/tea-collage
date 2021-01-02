@@ -1,10 +1,7 @@
-import {generatedJson} from "../psdProcessingTypes";
 import {ImageMapperMap} from "../components/ImageMapper";
 
-type CollageInfo = generatedJson.CollageInfo;
-
-const collageSizes = require('../collage-info/sizes.json');
-const areasMap = require('../collage-info/areas-map.json');
+const collageSizes: generatedJson.CollageSizeDef[] = require('../collage-info/sizes.json');
+const areasMap: generatedJson.Area[] = require('../collage-info/areas-map.json');
 const extractedDir = process.env.PUBLIC_URL + '/extracted';
 
 /**
@@ -34,9 +31,9 @@ export class OverlayDimensions {
 export class CollageSources {
     public constructor(
         public readonly fullName: string,
-        public readonly full: CollageInfo,
+        public readonly full: generatedJson.CollageFullInfo,
         public readonly previewName: string,
-        public readonly preview: CollageInfo
+        public readonly preview: generatedJson.CollagePreviewInfo
     ) {}
 
     public getBackgroundUrl(preview: boolean = false): string {
@@ -60,7 +57,7 @@ export class CollageSources {
         );
     }
 
-    public getCollageInfo(preview: boolean): CollageInfo {
+    public getCollageInfo(preview: boolean): generatedJson.CollageFullInfo|generatedJson.CollagePreviewInfo {
         return preview ? this.preview : this.full;
     }
 
@@ -77,26 +74,18 @@ export class CollageSources {
     }
 }
 
-class SizeOption {
-    constructor(
-        public readonly name: string,
-        public readonly width: number,
-        public readonly height: number
-    ) {}
-}
-
 class CollageSourcesSet {
-    public readonly sizesMap: any;
-    public readonly previewSize: any;
+    public readonly sizesMap: Map<string, generatedJson.CollageSizeDef>;
+    public readonly previewSize: generatedJson.CollageSizeDef;
 
     public constructor() {
         collageSizes.sort((a, b) => a.width - b.width);
-        this.sizesMap = new Map(
+        this.sizesMap = new Map<string, generatedJson.CollageSizeDef>(
             collageSizes
                 .filter(size => !size.preview)
                 .map(size => [
                     size.name,
-                    new SizeOption(size.name, size.width, size.height)
+                    size
                 ])
         );
         this.previewSize =
@@ -105,7 +94,7 @@ class CollageSourcesSet {
     }
 
     // noinspection JSUnusedGlobalSymbols
-    public getSizes(): SizeOption[] {
+    public getSizes(): generatedJson.CollageSizeDef[] {
         return Array.from(this.sizesMap.values());
     }
 
@@ -121,8 +110,11 @@ class CollageSourcesSet {
         throw new Error('invalid setName = ' + setName);
     }
 
-    public getAreasMap(): ImageMapperMap {
-        return areasMap;
+    public getAreasMap(mapName: string = 'collage'): ImageMapperMap {
+        return {
+            name: mapName,
+            areas: areasMap
+        };
     }
 }
 

@@ -1,5 +1,5 @@
 {
-  "gu-shu-shu-cha": {
+  "gu_shu_shu_cha": {
     "fillColor": "rgba(0, 40, 10, 0.1)",
     "strokeColor": "#ffe373"
   },
@@ -7,7 +7,7 @@
     "fillColor": "rgba(40, 40, 0, 0.2)",
     "strokeColor": "#2ebf11"
   },
-  "shu-pujer-da-shi-cha": {
+  "shu_da_shi_cha": {
     "fillColor": "rgba(70, 70, 70, 0.2)",
     "strokeColor": "#b90000"
   },

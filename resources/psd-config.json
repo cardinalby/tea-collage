@@ -2,7 +2,8 @@
   "psdFile": "teas.psd",
   "layers": {
     "background": "Background",
-    "overlayGroup": "overlay"
+    "overlayGroup": "overlay",
+    "areasGroup": "areas"
   },
   "targetSizes": [
     { "name": "large", "width": 2000 },
