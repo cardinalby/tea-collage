@@ -68,6 +68,7 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
                 dimensions={props.collageSources.getOverlayDimensions(overlayLayerId).scale(scale)}
                 onFilledAreaLeave={() => props.onOverlayLeave && props.onOverlayLeave(overlayLayerId)}
                 onFilledAreaClick={() => props.onOverlayClick && props.onOverlayClick(overlayLayerId)}
+                exitDistance={150}
                 loadEvents={props.loadEvents}
             />
         );

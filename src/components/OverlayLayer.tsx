@@ -4,6 +4,7 @@ import {SmoothImageLoadEvents, SmoothImageLoadEventsWrapper, SmoothImage} from "
 import {isTransparentCanvasPoint} from "../models/canvasUtils";
 import {getDistanceBetweenPoints, Point2d} from "../models/point2d";
 
+type DivMouseEvent = MouseEvent<HTMLDivElement>;
 type ImgMouseEvent = MouseEvent<HTMLImageElement>;
 
 interface OverlayLayerProps {
@@ -12,17 +13,9 @@ interface OverlayLayerProps {
     previewSrc: string,
     dimensions: OverlayDimensions
     loadEvents: SmoothImageLoadEvents,
-    onFilledAreaLeave: (event: ImgMouseEvent, layerId?: string) => void,
-    onFilledAreaClick: (event: ImgMouseEvent, layerId?: string) => void
-}
-
-function getCanvasCoordsByImgMouseEvent(event: ImgMouseEvent): Point2d {
-    const target = event.target as HTMLImageElement;
-    const rect = target.getBoundingClientRect();
-    return {
-        x: (event.clientX - rect.left) * target.naturalWidth / target.clientWidth,
-        y: (event.clientY - rect.top) * target.naturalHeight / target.clientHeight
-    };
+    exitDistance: number,
+    onFilledAreaLeave: (event: DivMouseEvent, layerId?: string) => void,
+    onFilledAreaClick: (event: DivMouseEvent, layerId?: string) => void
 }
 
 function OverlayLayer(props: OverlayLayerProps)
@@ -49,15 +42,27 @@ function OverlayLayer(props: OverlayLayerProps)
         loadEvents.onLoad(target, preview, component);
     };
 
-    const isTransparentPoint = (event: ImgMouseEvent) => {
-        if (ctx) {
+    function getCanvasCoordsByImgMouseEvent(event: ImgMouseEvent): Point2d {
+        const target = event.target as HTMLImageElement;
+        const rect = target.getBoundingClientRect();
+        return {
+            x: (event.clientX - rect.left) * target.naturalWidth / target.clientWidth,
+            y: (event.clientY - rect.top) * target.naturalHeight / target.clientHeight
+        };
+    }
+
+    function isTransparentPoint(event: MouseEvent<any>): boolean {
+        if (event.target instanceof HTMLDivElement) {
+            return true;
+        }
+        if (ctx && event.target instanceof HTMLImageElement) {
             const canvasPoint = getCanvasCoordsByImgMouseEvent(event);
             return isTransparentCanvasPoint(ctx, canvasPoint);
         }
         return false;
     }
 
-    const onMouseMove = (event: ImgMouseEvent)  => {
+    function onMouseMove(event: DivMouseEvent): void {
         if (isTransparentPoint(event)) {
             if (!exitPoint.current) {
                 exitPoint.current = {x: event.clientX, y: event.clientY};
@@ -69,25 +74,19 @@ function OverlayLayer(props: OverlayLayerProps)
         const eventPoint = {x: event.clientX, y: event.clientY};
         if (exitPoint.current) {
             const distance = getDistanceBetweenPoints(exitPoint.current, eventPoint);
-            console.log(distance, (1 - distance / 100) * 100);
-            setLayerOpacity((1 - distance / 100) * 100);
+            const opacity = (1 - distance / props.exitDistance) * 100;
+            console.log(distance, opacity);
+            setLayerOpacity(opacity);
 
-            if (props.onFilledAreaLeave && distance > 200) {
+            if (props.onFilledAreaLeave && opacity < 10) {
                 props.onFilledAreaLeave(event);
             }
         } else if (layerOpacity !== 100) {
             setLayerOpacity(100);
         }
-    };
-    const onMouseLeave = (event: ImgMouseEvent) => {
-        if (props.onFilledAreaLeave &&
-            actualImg.current &&
-            event.target === actualImg.current.element
-        ) {
-            props.onFilledAreaLeave(event);
-        }
     }
-    const onMouseClick = (event: ImgMouseEvent) => {
+
+    function onMouseClick(event: DivMouseEvent): void {
         if (props.onFilledAreaLeave || props.onFilledAreaClick) {
             if (isTransparentPoint(event)) {
                 props.onFilledAreaLeave && props.onFilledAreaLeave(event);
@@ -99,7 +98,11 @@ function OverlayLayer(props: OverlayLayerProps)
 
     return (
         <div className={'collage-overlay-container'}>
-            <div style={{position: 'absolute', width: '100%', height: '100%', opacity: layerOpacity + '%'}}>
+            <div
+                style={{position: 'absolute', width: '100%', height: '100%', opacity: layerOpacity + '%'}}
+                onMouseMove={onMouseMove}
+                onClick={onMouseClick}
+            >
                 <SmoothImage
                     componentId={props.layerId}
                     src={props.src}
@@ -118,7 +121,6 @@ function OverlayLayer(props: OverlayLayerProps)
                         },
                         alt: 'overlay',
                         onMouseMove,
-                        onMouseLeave,
                         onClick: onMouseClick
                     }}
                 />
