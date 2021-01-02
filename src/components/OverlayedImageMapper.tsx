@@ -50,13 +50,6 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
         props.collageSources.full.background.height
         );
 
-    // Move outside the overlay
-    const onImageMapperMouseMove = () => {
-        if (props.onOverlayLeave && props.overlayLayerId) {
-            props.onOverlayLeave && props.onOverlayLeave(props.overlayLayerId);
-        }
-    }
-
     let overlay: JSX.Element|undefined = undefined;
     if (props.overlayLayerId !== undefined) {
         const overlayLayerId = props.overlayLayerId;
@@ -68,7 +61,8 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
                 dimensions={props.collageSources.getOverlayDimensions(overlayLayerId).scale(scale)}
                 onFilledAreaLeave={() => props.onOverlayLeave && props.onOverlayLeave(overlayLayerId)}
                 onFilledAreaClick={() => props.onOverlayClick && props.onOverlayClick(overlayLayerId)}
-                exitDistance={150}
+                exitDistance={60 * scale}
+                fadeOutDistance={70 * scale}
                 loadEvents={props.loadEvents}
             />
         );
@@ -88,7 +82,6 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
                 previewSrc={props.collageSources.getBackgroundUrl(true)}
                 imgWidth={props.collageSources.full.background.width}
                 map={props.areasMap}
-                onMouseMove={onImageMapperMouseMove}
                 {...imgMapperProps}
             />
             {overlay}

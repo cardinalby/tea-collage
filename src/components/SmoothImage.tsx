@@ -1,5 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {classNames} from "../models/reactUtils";
+import {useComponentId} from "../hooks/useComponentId";
 
 export type SmoothImageEvent = (target: HTMLImageElement, preview: boolean, component: any) => void;
 
@@ -34,14 +35,12 @@ export interface SmoothImageProps {
     loadEvents?: SmoothImageLoadEvents
 }
 
-let idCounter = 1;
-
 export function SmoothImage(props: SmoothImageProps) {
     const [fullLoaded, setFullLoaded] = useState(false);
     const [previewLoaded, setPreviewLoaded] = useState(false);
     const previewSrc = useRef<string|undefined>(undefined);
     const fullSrc = useRef<string|undefined>(undefined);
-    const componentId = useState(props.componentId || Symbol('smooth_image_' + idCounter++))[0];
+    const componentId = useComponentId(props.componentId, 'smooth_image');
 
     const loadEvents = useMemo(() => new SmoothImageLoadEventsWrapper(props.loadEvents), [props.loadEvents]);
     const fullImg = useRef(undefined as HTMLImageElement|undefined);

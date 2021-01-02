@@ -6,6 +6,7 @@ import {getDistanceBetweenPoints, Point2d} from "../models/point2d";
 
 type DivMouseEvent = MouseEvent<HTMLDivElement>;
 type ImgMouseEvent = MouseEvent<HTMLImageElement>;
+type LayerMouseEvent = MouseEvent<HTMLImageElement|HTMLDivElement>;
 
 interface OverlayLayerProps {
     layerId?: string,
@@ -13,9 +14,11 @@ interface OverlayLayerProps {
     previewSrc: string,
     dimensions: OverlayDimensions
     loadEvents: SmoothImageLoadEvents,
-    exitDistance: number,
-    onFilledAreaLeave: (event: DivMouseEvent, layerId?: string) => void,
-    onFilledAreaClick: (event: DivMouseEvent, layerId?: string) => void
+    exitDistance?: number,
+    fadeOutDistance?: number,
+    onFilledAreaLeaving?: (event: LayerMouseEvent, opacity: number, exitLevel: number, layerId?: string) => void
+    onFilledAreaLeave?: (event: DivMouseEvent, layerId?: string) => void,
+    onFilledAreaClick?: (event: DivMouseEvent, layerId?: string) => void
 }
 
 function OverlayLayer(props: OverlayLayerProps)
@@ -26,7 +29,7 @@ function OverlayLayer(props: OverlayLayerProps)
     const [layerOpacity, setLayerOpacity] = useState(100);
     const exitPoint = useRef<Point2d|undefined>();
 
-    const onImageLoad = (target, preview, component) => {
+    const onImageLoad = (target: HTMLImageElement, preview: boolean, component) => {
         if (!actualImg.current || actualImg.current.preview === preview || !preview) {
             actualImg.current = { element: target, preview };
         }
@@ -51,18 +54,18 @@ function OverlayLayer(props: OverlayLayerProps)
         };
     }
 
-    function isTransparentPoint(event: MouseEvent<any>): boolean {
+    function isTransparentPoint(event: LayerMouseEvent): boolean {
         if (event.target instanceof HTMLDivElement) {
             return true;
         }
         if (ctx && event.target instanceof HTMLImageElement) {
-            const canvasPoint = getCanvasCoordsByImgMouseEvent(event);
+            const canvasPoint = getCanvasCoordsByImgMouseEvent(event as ImgMouseEvent);
             return isTransparentCanvasPoint(ctx, canvasPoint);
         }
         return false;
     }
 
-    function onMouseMove(event: DivMouseEvent): void {
+    function onMouseMove(event: LayerMouseEvent): void {
         if (isTransparentPoint(event)) {
             if (!exitPoint.current) {
                 exitPoint.current = {x: event.clientX, y: event.clientY};
@@ -73,13 +76,33 @@ function OverlayLayer(props: OverlayLayerProps)
 
         const eventPoint = {x: event.clientX, y: event.clientY};
         if (exitPoint.current) {
-            const distance = getDistanceBetweenPoints(exitPoint.current, eventPoint);
-            const opacity = (1 - distance / props.exitDistance) * 100;
-            console.log(distance, opacity);
-            setLayerOpacity(opacity);
+            let distance: number|undefined = undefined;
+            if (props.fadeOutDistance || props.exitDistance) {
+                distance = getDistanceBetweenPoints(exitPoint.current, eventPoint);
+            }
+            let opacity = 100;
+            if (props.fadeOutDistance && distance) {
+                opacity = (1 - distance / props.fadeOutDistance) * 100;
+            }
+            if (layerOpacity !== opacity) {
+                setLayerOpacity(opacity);
+            }
+            props.onFilledAreaLeaving && props.onFilledAreaLeaving(
+                event,
+                opacity,
+                distance && props.exitDistance
+                    ? distance / props.exitDistance
+                    : 100,
+                    props.layerId
+            );
 
-            if (props.onFilledAreaLeave && opacity < 10) {
-                props.onFilledAreaLeave(event);
+            if (props.onFilledAreaLeave &&
+                (
+                    (distance && props.exitDistance && distance >= props.exitDistance) ||
+                    !props.exitDistance
+                )
+            ) {
+                props.onFilledAreaLeave(event, props.layerId);
             }
         } else if (layerOpacity !== 100) {
             setLayerOpacity(100);
@@ -89,9 +112,9 @@ function OverlayLayer(props: OverlayLayerProps)
     function onMouseClick(event: DivMouseEvent): void {
         if (props.onFilledAreaLeave || props.onFilledAreaClick) {
             if (isTransparentPoint(event)) {
-                props.onFilledAreaLeave && props.onFilledAreaLeave(event);
+                props.onFilledAreaLeave && props.onFilledAreaLeave(event, props.layerId);
             } else {
-                props.onFilledAreaClick && props.onFilledAreaClick(event);
+                props.onFilledAreaClick && props.onFilledAreaClick(event, props.layerId);
             }
         }
     }
