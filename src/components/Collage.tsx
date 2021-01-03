@@ -5,6 +5,7 @@ import imgLoadingEvents from "../hooks/useImgLoadingEvents";
 import TeapotSpinner from "./TeapotSpinner";
 import {ImageMapperArea} from "./ImageMapper";
 import {useOverlayImagesPreloader} from "../hooks/useOverlayImagesPreloader";
+import {useMouseHoverArea} from "../hooks/useMouseHoverArea";
 
 export interface CollageProps {
     layerId?: string
@@ -14,18 +15,18 @@ function Collage(props: CollageProps) {
     const [containerRef, setContainerRef] = useState<HTMLDivElement|null>(null);
     const [overlayLayerId, setOverlayLayerId] = useState<string|undefined>(props.layerId);
     const [collageSources, setCollageSources] = useState(collageSourcesSet.getSources('medium'));
-    useOverlayImagesPreloader(collageSources, true, false);
 
-    const onAreaClick = (area: ImageMapperArea) => {
-        area.group && setOverlayLayerId(area.group);
+    const mouseHoverArea = useMouseHoverArea(1000, 1500);
+    useOverlayImagesPreloader(collageSources, true, mouseHoverArea.preloadGroup || false);
+
+    function onAreaClick(area: ImageMapperArea) {
+        return area.group && setOverlayLayerId(area.group);
     }
-    const onOverlayLeave = () => setOverlayLayerId(undefined);
-    const onOverlayClick = (overlayLayerId: string) => {
+    function onOverlayLeave() {
+        setOverlayLayerId(undefined);
+    }
+    function onOverlayClick(overlayLayerId: string) {
         setCollageSources(collageSourcesSet.getSources('large'))
-    };
-
-    const changeSize = () => {
-        setCollageSources(collageSourcesSet.getSources('large'));
     }
 
     const imagesLoadingHandler = imgLoadingEvents();
@@ -40,6 +41,8 @@ function Collage(props: CollageProps) {
             onClick={onAreaClick}
             onOverlayLeave={onOverlayLeave}
             onOverlayClick={onOverlayClick}
+            onMouseEnter={mouseHoverArea.onMouseEnterArea}
+            onMouseLeave={mouseHoverArea.onMouseLeaveArea}
             loadEvents={imagesLoadingHandler.eventHandlers}
         >
             <TeapotSpinner
@@ -51,9 +54,6 @@ function Collage(props: CollageProps) {
 
     return (
         <div className="collage-container" ref={node => setContainerRef(node)}>
-            <div style={{'width': 50, 'height': 40, backgroundColor: 'red'}}
-                 onClick={changeSize}
-            />
             {imageMapper}
         </div>
     );

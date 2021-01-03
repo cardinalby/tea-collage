@@ -49,6 +49,8 @@ export function useOverlayImagesPreloader (
         if (requiredUrlsMap.has(existingUrl)) {
             requiredUrlsMap.delete(existingUrl);
         } else {
+            const existingImg = images.current.get(existingUrl);
+            existingImg && (existingImg.src = '');
             images.current.delete(existingUrl);
         }
     }
