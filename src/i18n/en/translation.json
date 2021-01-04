@@ -1,0 +1,41 @@
+{
+  "unknown_tea": "Unknown tea",
+  "teas": {
+    "gu_shu_shu_cha": {
+      "name": "Гу Шу Шу Ча"
+    },
+    "shen_ajaloshan_shen_cha": {
+      "name": "Айлаошань Шэн Ча"
+    },
+    "shu_da_shi_cha": {
+      "name": "Да Ши Ча"
+    },
+    "shu_ailaoshan_leo": {
+      "name": "Айлаошань Леопард из серии Буфан"
+    },
+    "shu_bulan_cha_huan": {
+      "name": "Булан Ча Хуан"
+    },
+    "shu_cha_dao_shi": {
+      "name": "Ча Дао Ши"
+    },
+    "shu_dai_czhu_shu_cha": {
+      "name": "Дай Цзю Шу Ча"
+    },
+    "shu_hatnik": {
+      "name": "Шу пуэр Хатник"
+    },
+    "shu_huanshan_mountain": {
+      "name": "Шу пуэр с горы Хуаншань"
+    },
+    "shu_lincan": {
+      "name": "Линьцан Шу Пуэр"
+    },
+    "shu_shi_hao_shu_cha_10": {
+      "name": "Шу пуэр «Номер 10» из округа Пуэр"
+    },
+    "shu_zoloto_menhaya": {
+      "name": "Золото Мэнхая"
+    }
+  }
+}

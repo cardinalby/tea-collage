@@ -3,6 +3,7 @@ import '../css/spinner.css';
 import '../css/overlay.css';
 import '../css/collage.css';
 
+import '../i18n/config';
 import React from "react";
 import Collage from "./Collage";
 import {HashRouter, Route} from 'react-router-dom'
@@ -19,8 +20,6 @@ function App() {
     return (
     <div className="App">
         <HashRouter>
-            {/*<Route path="/" exact*/}
-            {/*       render={() => renderCollage()}/>*/}
             <Route path="/collage/:layerId?"
                    render={(...routeProps) => renderCollage(getRouteLayerId(routeProps))}/>
             <Route path="/description/:layerId"

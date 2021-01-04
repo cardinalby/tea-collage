@@ -3,6 +3,7 @@ import {OverlayDimensions} from "../models/collageSourcesSet";
 import {SmoothImageLoadEvents, SmoothImageLoadEventsWrapper, SmoothImage} from "./SmoothImage";
 import {getCanvasPointAlpha} from "../models/canvasUtils";
 import {Point2d} from "../models/point2d";
+import { useTranslation } from 'react-i18next';
 
 type DivMouseEvent = MouseEvent<HTMLDivElement>;
 type ImgMouseEvent = MouseEvent<HTMLImageElement>;
@@ -25,6 +26,7 @@ function OverlayLayer(props: OverlayLayerProps)
     const [ctx, setCtx] = useState<CanvasRenderingContext2D|undefined>();
     const actualImg = useRef<{element: HTMLImageElement, preview: boolean}>();
     const isTransparentMouseHoverPoint = useRef<boolean>();
+    const { t } = useTranslation();
 
     const onImageLoad = (target: HTMLImageElement, preview: boolean, component) => {
         if (!actualImg.current || actualImg.current.preview === preview || !preview) {
@@ -110,7 +112,7 @@ function OverlayLayer(props: OverlayLayerProps)
                             width: props.dimensions.width,
                             height: props.dimensions.height,
                         },
-                        alt: 'overlay',
+                        alt: props.layerId ? t(`teas.${props.layerId}.name`) : 'unknown_tea',
                         onMouseMove,
                         onClick: onMouseClick
                     }}
