@@ -1,5 +1,6 @@
 import {useRef, useState} from "react";
 import {ImageMapperArea} from "../components/ImageMapper";
+import {useDisposableTimers} from "./useDisposableTimers";
 
 export interface MouseHoverArea {
     hoverAreaGroup: string|undefined,
@@ -11,11 +12,12 @@ export interface MouseHoverArea {
 export function useMouseHoverArea(startPreloadAfterMs: number, stopPreloadAfterMs?: number): MouseHoverArea {
     const hoverAreaGroup = useRef<string>();
     const [preloadGroup, setPreloadGroup] = useState<string|undefined>();
+    const disposableTimers = useDisposableTimers();
 
     function onMouseEnterArea(area: ImageMapperArea) {
         hoverAreaGroup.current = area.group;
         if (startPreloadAfterMs !== undefined) {
-            setTimeout(() => {
+            disposableTimers.setTimeout(() => {
                 if (hoverAreaGroup.current === area.group) {
                     setPreloadGroup(area.group);
                 }
@@ -27,7 +29,7 @@ export function useMouseHoverArea(startPreloadAfterMs: number, stopPreloadAfterM
             hoverAreaGroup.current = undefined;
         }
         if (stopPreloadAfterMs !== undefined) {
-            setTimeout(() => {
+            disposableTimers.setTimeout(() => {
                 if (hoverAreaGroup.current !== area.group) {
                     setPreloadGroup(undefined);
                 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import OverlayLayer from "./OverlayLayer";
 import ImageMapper, {
     ImageMapperBehaviorProps, ImageMapperMap,
@@ -7,6 +7,7 @@ import ImageMapper, {
 } from "./ImageMapper";
 import {CollageSources} from "../models/collageSourcesSet";
 import {useFittedScale} from "../hooks/useFittedScale";
+import {classNames} from "../models/reactUtils";
 
 interface OverlayedImageMapperProps extends
     ImageMapperStyleProps,
@@ -16,8 +17,7 @@ interface OverlayedImageMapperProps extends
     areasMap: ImageMapperMap,
     fitToElement: HTMLElement,
     overlayLayerId?: string,
-    onOverlayLeave: (layerId: string) => void,
-    onOverlayClick: (layerId: string) => void,
+    onOverlayClick?: (event, layerId: string, isTransparentArea: boolean) => void,
     children?: JSX.Element
 }
 
@@ -50,40 +50,58 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
         props.collageSources.full.background.height
         );
 
-    let overlay: JSX.Element|undefined = undefined;
-    if (props.overlayLayerId !== undefined) {
-        const overlayLayerId = props.overlayLayerId;
-        overlay = (
-            <OverlayLayer
-                layerId={props.overlayLayerId}
-                src={props.collageSources.getOverlayUrl(overlayLayerId)}
-                previewSrc={props.collageSources.getOverlayUrl(overlayLayerId, true)}
-                dimensions={props.collageSources.getOverlayDimensions(overlayLayerId).scale(scale)}
-                onFilledAreaLeave={() => props.onOverlayLeave && props.onOverlayLeave(overlayLayerId)}
-                onFilledAreaClick={() => props.onOverlayClick && props.onOverlayClick(overlayLayerId)}
-                exitDistance={60 * scale}
-                fadeOutDistance={70 * scale}
-                loadEvents={props.loadEvents}
-            />
-        );
+    const [overlayHoverOnTransparent, setOverlayHoverOnTransparent] = useState<boolean|undefined>(false);
+
+    function onOverlayClick(event, isTransparentArea: boolean) {
+        if (props.overlayLayerId && props.onOverlayClick) {
+            props.onOverlayClick(event, props.overlayLayerId, isTransparentArea);
+        }
     }
+
+    function onOverlayMouseHover(event, isTransparentArea: boolean) {
+        if (overlayHoverOnTransparent !== isTransparentArea) {
+            setOverlayHoverOnTransparent(isTransparentArea);
+        }
+    }
+
+    function onOverlayMouseLeave() {
+        setOverlayHoverOnTransparent(undefined);
+    }
+
+    const overlay = props.overlayLayerId !== undefined && (
+        <OverlayLayer
+            layerId={props.overlayLayerId}
+            src={props.collageSources.getOverlayUrl(props.overlayLayerId)}
+            previewSrc={props.collageSources.getOverlayUrl(props.overlayLayerId, true)}
+            dimensions={props.collageSources.getOverlayDimensions(props.overlayLayerId).scale(scale)}
+            onClick={onOverlayClick}
+            onMouseHover={onOverlayMouseHover}
+            onMouseLeave={onOverlayMouseLeave}
+            loadEvents={props.loadEvents}
+        />
+    );
 
     const imgMapperProps = {
         ...getImageMapperProps(props),
         width: props.collageSources.full.background.width * scale,
         height: props.collageSources.full.background.height * scale,
-        imgClassName: props.overlayLayerId ? 'collage-bg-inactive' : 'collage-bg-active'
+        containerClassName: 'collage-bg',
+        src: props.collageSources.getBackgroundUrl(false),
+        previewSrc: props.collageSources.getBackgroundUrl(true),
+        imgWidth: props.collageSources.full.background.width,
+        map: props.areasMap
     };
 
     return (
-        <div style={{position: 'absolute'}}>
-            <ImageMapper
-                src={props.collageSources.getBackgroundUrl(false)}
-                previewSrc={props.collageSources.getBackgroundUrl(true)}
-                imgWidth={props.collageSources.full.background.width}
-                map={props.areasMap}
-                {...imgMapperProps}
-            />
+        <div style={{position: 'absolute'}}
+             className={classNames(
+                 props.overlayLayerId ? 'overlay-shown' : undefined,
+                 props.overlayLayerId && overlayHoverOnTransparent === true && 'overlay-hover-on-transparent',
+                 props.overlayLayerId && overlayHoverOnTransparent === false && 'overlay-hover-on-filled',
+                 props.overlayLayerId && overlayHoverOnTransparent === undefined && 'overlay-no-hover',
+             )}
+        >
+            <ImageMapper {...imgMapperProps} />
             {overlay}
             {props.children}
         </div>

@@ -6,6 +6,15 @@
     height: 100%;
     left: 0;
     top: 0;
+    transition: filter 0.5s;
+}
+
+.overlay-shown.overlay-hover-on-transparent .collage-overlay-container {
+   filter: grayscale(0.2) brightness(0.8);
+}
+
+.overlay-shown.overlay-hover-on-filled .collage-overlay-container {
+    cursor: pointer;
 }
 
 .collage-overlay-container img {

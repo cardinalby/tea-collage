@@ -5,11 +5,18 @@
     height: 95vh;
 }
 
-.collage-bg-active {
-    transition: filter 0.5s ease;
+.collage-bg {
+    transition: filter 0.5s;
 }
 
-.collage-bg-inactive {
+.overlay-shown .collage-bg {
     filter: grayscale(0.6) brightness(0.6);
-    transition: all 0.5s ease;
+}
+
+.overlay-shown.overlay-no-hover .collage-bg {
+    filter: grayscale(0.4) brightness(0.7);
+}
+
+.overlay-shown.overlay-hover-on-transparent .collage-bg {
+    filter: grayscale(0.3) brightness(0.8);
 }

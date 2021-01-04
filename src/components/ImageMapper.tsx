@@ -38,7 +38,7 @@ export interface ImageMapperStyleProps {
     preFillColor?: string,
     preFillStrokeColor?: string,
     lineWidth?: number,
-    imgClassName?: string
+    containerClassName?: string
 }
 
 export interface ImageMapperSourceProps {
@@ -339,6 +339,7 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
                     height: this.props.height
                 }}
                  ref={node => (this.container = node)}
+                 className={this.props.containerClassName}
             >
                 <SmoothImage
                     src={this.props.src}
@@ -350,7 +351,6 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
                     }}
                     imgProps={{
                         style: this.styles.img,
-                        className: this.props.imgClassName,
                         useMap: `#${this.props.map.name}`,
                         onClick: this.imageClick.bind(this)
                     }}
