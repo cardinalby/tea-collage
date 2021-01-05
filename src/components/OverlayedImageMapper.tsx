@@ -93,7 +93,7 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
     };
 
     return (
-        <div style={{position: 'absolute'}}
+        <div style={{position: 'relative'}}
              className={classNames(
                  props.overlayLayerId ? 'overlay-shown' : undefined,
                  props.overlayLayerId && overlayHoverOnTransparent === true && 'overlay-hover-on-transparent',

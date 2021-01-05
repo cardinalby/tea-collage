@@ -6,8 +6,9 @@
     "areasGroup": "areas"
   },
   "targetSizes": [
-    { "name": "large", "width": 2000 },
-    { "name": "medium", "width": 1024 },
+    { "name": "large", "width": 2300 },
+    { "name": "medium", "width": 1500 },
+    { "name": "small", "width": 1024 },
     { "name": "preview", "width": 350, "preview": true }
   ]
 }

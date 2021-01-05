@@ -1,8 +1,10 @@
 .collage-container {
     margin: auto;
     justify-content: center;
-    width: 95%;
-    height: 95vh;
+    align-items: center;
+    display: flex;
+    width: 100%;
+    height: calc(100% - 10px);
 }
 
 .collage-bg {

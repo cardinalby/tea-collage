@@ -1,0 +1,95 @@
+.quality-selector {
+    position: relative;
+}
+
+.quality-selector > * {
+    user-select: none;
+}
+
+.quality-selector-button {
+    width: 50px;
+    height: 50px;
+    display: block;
+    background-color: #505050;
+    text-align: center;
+    align-items: center;
+    line-height: 50px;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: default;
+    border-radius: 50%;
+    border: 1px solid #737373;
+}
+
+.quality-selector-button:focus {
+    outline: none;
+}
+
+.quality-selector-menu {
+    background-color: rgba(49, 150, 75, 0.87);
+    z-index: 200;
+    border-radius: 15px;
+    position: absolute;
+    top: 0;
+    left: 58px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    filter: drop-shadow(8px 8px 8px black);
+    cursor: default;
+    overflow: hidden;
+}
+
+.quality-selector-option {
+    display: flex;
+    width: 100%;
+    height: 50px;
+    font-size: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.quality-selector-option:focus {
+    outline: none;
+}
+
+.quality-selector-option:hover {
+    background-color: rgb(24, 109, 51);
+}
+
+.quality-selector-option.current-option {
+    background-color: #1a5f2d;
+}
+
+.quality-selector-option .quality-resolution {
+    color: #a7c5ae;
+    font-size: 12px;
+    margin-right: 10px;
+    height: 25px;
+    background-color: #1a5f2d;
+    line-height: 25px;
+    padding: 0 5px;
+    border-radius: 6px;
+}
+
+.quality-selector-option.current-option .quality-resolution {
+    background-color: #368247;
+}
+
+.quality-selector-option:hover .quality-resolution {
+    background-color: #154e24;
+}
+
+.quality-selector-option.current-option:hover .quality-resolution {
+    background-color: #368247;
+}
+
+.quality-selector-option .quality-name {
+    float: left;
+    color: #e4e4e4;
+    margin-left: 15px;
+}
+
+.quality-selector-option:hover .quality-name {
+    color: #f3f3f3;
+}

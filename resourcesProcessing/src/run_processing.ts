@@ -5,7 +5,7 @@ import {getImgAreas} from "./jsonExport/imgAreasMap";
 import {adjustPsdResult, resizeFile} from "./resizing";
 import {processPsd} from "./psdParsing/processPsd";
 import {createFullCollageInfo, createPreviewCollageInfo} from "./jsonExport/collageInfo";
-import CollageSizeDef = generatedJson.CollageSizeDef;
+import {saveSizes} from "./jsonExport/sizes";
 
 const os = require('os');
 const path = require('path')
@@ -44,23 +44,6 @@ async function saveResizedBackground(
     );
 }
 
-async function saveSizes(psdResult: PsdParsingResult): Promise<void> {
-    process.stdout.write(`Writing ${consts.COLLAGE_INFO_SIZES_JSON}...`);
-    const imgRatio = psdResult.height / psdResult.width;
-    const sizes = psdConfig.targetSizes.map(targetSize => ({
-        name: targetSize.name,
-        width: targetSize.width,
-        height: targetSize.width * imgRatio,
-        preview: targetSize.preview
-    }) as CollageSizeDef);
-
-    await fs.writeJson(
-        path.join(consts.COLLAGE_INFO_DIR, consts.COLLAGE_INFO_SIZES_JSON),
-        sizes
-    );
-    process.stdout.write('done' + os.EOL)
-}
-
 (async function() {
     await emptyDir(consts.EXTRACTED_DIR);
     const psdResult = await processPsd(
@@ -77,9 +60,10 @@ async function saveSizes(psdResult: PsdParsingResult): Promise<void> {
     await saveImgAreas(psdResult);
 
     await emptyDir(consts.RESIZED_DIR);
+
     for (const size of psdConfig.targetSizes) {
         await emptyDir(path.join(consts.RESIZED_DIR, size.name));
-        const scale = size.width / psdResult.width;
+        const scale = size.width ? (size.width / psdResult.width) : (size.height / psdResult.height);
 
         const destDir = path.join(consts.RESIZED_DIR, size.name);
 

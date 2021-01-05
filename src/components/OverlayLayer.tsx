@@ -112,7 +112,7 @@ function OverlayLayer(props: OverlayLayerProps)
                             width: props.dimensions.width,
                             height: props.dimensions.height,
                         },
-                        alt: props.layerId ? t(`teas.${props.layerId}.name`) : 'unknown_tea',
+                        alt: props.layerId ? t(`teas.${props.layerId}.name`) : '',
                         onMouseMove,
                         onClick: onMouseClick
                     }}

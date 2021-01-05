@@ -1,0 +1,26 @@
+
+.smooth-img.ready {
+    opacity: 100%;
+}
+
+.smooth-img.preview.init {
+    opacity: 0;
+}
+
+.smooth-img.preview.loading {
+    opacity: 100%;
+    transition: opacity 1s;
+}
+
+.smooth-img.full.loading {
+    opacity: 50%;
+}
+
+.smooth-img.full {
+    transition: opacity 0.5s;
+}
+
+.smooth-img.ready {
+    transition: opacity 0.5s;
+}
+

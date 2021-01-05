@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import OverlayedImageMapper from "./OverlayedImageMapper";
-import collageSourcesSet from "../models/collageSourcesSet";
+import collageSourcesSet, {CollageSources} from "../models/collageSourcesSet";
 import imgLoadingEvents from "../hooks/useImgLoadingEvents";
 import TeapotSpinner from "./TeapotSpinner";
 import {ImageMapperArea} from "./ImageMapper";
@@ -11,17 +11,17 @@ import {useIsMounted} from "../hooks/useIsMounted";
 
 export interface CollageProps {
     layerId?: string
+    collageSources: CollageSources
 }
 
 function Collage(props: CollageProps) {
     const isMounted = useIsMounted();
     const imagesLoadingHandler = imgLoadingEvents();
     const [containerRef, setContainerRef] = useState<HTMLDivElement|null>(null);
-    const [collageSources, setCollageSources] = useState(collageSourcesSet.getSources('medium'));
 
     const history = useHistory();
     const mouseHoverArea = useMouseHoverArea(1000, 1500);
-    useOverlayImagesPreloader(collageSources, true, mouseHoverArea.preloadGroup || false);
+    useOverlayImagesPreloader(props.collageSources, true, mouseHoverArea.preloadGroup || false);
 
     function onAreaClick(area: ImageMapperArea) {
         if (area.group) {
@@ -33,13 +33,13 @@ function Collage(props: CollageProps) {
         if (isTransparentArea) {
             history.replace('/collage/');
         } else {
-            setCollageSources(collageSourcesSet.getSources('large'))
+            console.log(layerId);
         }
     }
 
     const imageMapper = containerRef
         ? <OverlayedImageMapper
-            collageSources={collageSources}
+            collageSources={props.collageSources}
             areasMap={collageSourcesSet.getAreasMap()}
             overlayLayerId={props.layerId}
             fitToElement={containerRef}

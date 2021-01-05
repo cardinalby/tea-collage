@@ -1,5 +1,4 @@
 {
-  "unknown_tea": "Unknown tea",
   "teas": {
     "gu_shu_shu_cha": {
       "name": "Гу Шу Шу Ча"
@@ -37,5 +36,10 @@
     "shu_zoloto_menhaya": {
       "name": "Золото Мэнхая"
     }
+  },
+  "sizes": {
+    "large": "Large",
+    "medium": "Medium",
+    "small": "Small"
   }
 }
