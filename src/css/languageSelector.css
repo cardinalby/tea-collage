@@ -1,0 +1,20 @@
+.lang-selector-option {
+    display: block;
+    cursor: default;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 25px;
+    color: #dcd0cc;
+    text-align: center;
+    user-select: none;
+}
+
+.lang-selector-option:hover {
+    color: #ffffff;
+}
+
+.lang-selector-option.lang-current {
+    background-color: #312e2c;
+    border-radius: 5px;
+}

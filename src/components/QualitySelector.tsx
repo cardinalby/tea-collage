@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { useTranslation } from 'react-i18next';
 import { Button, Wrapper, Menu, MenuItem } from 'react-aria-menubutton';
 import {classNames} from "../models/reactUtils";
+import {ReactComponent as GearIcon} from "../images/quality_gear.svg";
 
 export interface QualitySelectorProps {
     sizes: generatedJson.CollageSizeDef[],
@@ -14,13 +15,16 @@ export function QualitySelector(props: QualitySelectorProps) {
     const [selectedSizeName, setSelectedSizeName] = useState(props.initSizeName);
     const sizeShortName = t('sizes.' + selectedSizeName)[0];
 
-    const menuItems = props.sizes.map(sizeDef => {
+    const menuItems = props.sizes.map((sizeDef, index) => {
         return (
             <MenuItem className={classNames([
                           'quality-selector-option',
                            selectedSizeName === sizeDef.name ? 'current-option' : undefined
                       ])}
-                      value={sizeDef.name}>
+                      value={sizeDef.name}
+                      key={index}
+            >
+                <span className="option-mark">{selectedSizeName === sizeDef.name ? '✓' : ''}</span>
                 <span className="quality-name">
                     {t('sizes.' + sizeDef.name)}
                 </span>
@@ -42,7 +46,8 @@ export function QualitySelector(props: QualitySelectorProps) {
             onSelection={onSelection}
         >
             <Button className='quality-selector-button' tag={'div'}>
-                {sizeShortName}
+                <GearIcon className="quality-gear-icon"/>
+                <div className='quality-letter'>{sizeShortName}</div>
             </Button>
             <Menu className='quality-selector-menu'>
                 <div>

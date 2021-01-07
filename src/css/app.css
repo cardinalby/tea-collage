@@ -14,7 +14,29 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   margin-right: 8px;
 }
 
-@media (min-aspect-ratio: 1560/1060){}
+.app .control-panel .control-panel-center {
+  flex-grow: 1;
+}
+
+@media (max-aspect-ratio: 1560/1060) {
+  .app {
+    flex-direction: column;
+  }
+
+  .app .main-area {
+    width: 100%;
+    height: calc(100% - 58px);
+  }
+
+  .app .control-panel {
+    width: calc(100% - 4px);
+    margin-bottom: 8px;
+    height: 50px;
+    flex-direction: row;
+    margin-right: 0;
+  }
+}

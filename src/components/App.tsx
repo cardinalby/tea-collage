@@ -6,15 +6,18 @@ import '../css/smoothImage.css';
 import '../css/qualitySelector.css';
 
 import '../i18n/config';
-import React, {useRef, useState} from "react";
+import React, {useState} from "react";
 import Collage from "./Collage";
 import {HashRouter, Route} from 'react-router-dom'
 import {RouteComponentProps, Redirect} from "react-router";
 import {QualitySelector} from "./QualitySelector";
 import collageSourcesSet, {CollageSources} from "../models/collageSourcesSet";
 import {getRecommendedCollageSize} from "../models/sizeAutoSelector";
+import {LanguageSelector} from "./LanguageSelector";
 
 type RoutesProps = [RouteComponentProps<any>];
+
+const recommendedCollageSize = getRecommendedCollageSize(collageSourcesSet.getSizes());
 
 function getRouteParam(routeProps: RoutesProps, paramName: string): string|undefined {
     const foundProps = routeProps
@@ -24,8 +27,7 @@ function getRouteParam(routeProps: RoutesProps, paramName: string): string|undef
 }
 
 function App() {
-    const recommendedSizeName = useRef(getRecommendedCollageSize(collageSourcesSet.getSizes()));
-    const [collageSources, setCollageSources] = useState(collageSourcesSet.getSources(recommendedSizeName.current));
+    const [collageSources, setCollageSources] = useState(collageSourcesSet.getSources(recommendedCollageSize));
 
     function renderContents(routeProps: RoutesProps) {
         const section = getRouteParam(routeProps, 'section');
@@ -42,9 +44,11 @@ function App() {
                 <div className="control-panel">
                     <QualitySelector
                         sizes={collageSourcesSet.getSizes()}
-                        initSizeName={recommendedSizeName.current}
+                        initSizeName={recommendedCollageSize}
                         onChange={sizeName => setCollageSources(collageSourcesSet.getSources(sizeName))}
                     />
+                    <div className='control-panel-center'/>
+                    <LanguageSelector/>
                 </div>
                 <div className={'main-area'}>
                     {mainArea}

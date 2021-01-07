@@ -4,7 +4,7 @@ declare namespace generatedJson {
         name: string,
         width: number,
         height: number,
-        size: number,
+        avgImgSize: number,
         preview?: boolean
     }
 

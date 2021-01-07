@@ -7,18 +7,42 @@
 }
 
 .quality-selector-button {
+    display: block;
+    cursor: default;
     width: 50px;
     height: 50px;
-    display: block;
-    background-color: #505050;
+}
+
+.quality-selector-button .quality-gear-icon {
+    width: 50px;
+    height: 50px;
+}
+
+.quality-selector-button .quality-gear-icon path {
+    fill: #dcd0cc;
+}
+
+.quality-selector-button:hover .quality-gear-icon path {
+    fill: #ffffff;
+}
+
+.quality-selector-button .quality-letter {
+    position: absolute;
+    top: 27px;
+    left: 27px;
+    background-color: #e2c162;
+    border: solid 2px black;
+    border-radius: 4px;
+    width: 17px;
+    height: 17px;
     text-align: center;
-    align-items: center;
-    line-height: 50px;
-    font-size: 30px;
-    font-weight: bold;
-    cursor: default;
-    border-radius: 50%;
-    border: 1px solid #737373;
+    line-height: 17px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.quality-selector-button:hover .quality-letter {
+    background-color: #ffdb70;
 }
 
 .quality-selector-button:focus {
@@ -26,13 +50,13 @@
 }
 
 .quality-selector-menu {
-    background-color: rgba(49, 150, 75, 0.87);
+    background-color: rgb(236, 222, 205);
     z-index: 200;
     border-radius: 15px;
     position: absolute;
     top: 0;
     left: 58px;
-    width: 200px;
+    min-width: max-content;
     display: flex;
     flex-direction: column;
     filter: drop-shadow(8px 8px 8px black);
@@ -54,42 +78,43 @@
 }
 
 .quality-selector-option:hover {
-    background-color: rgb(24, 109, 51);
+    background-color: rgb(222, 197, 172);
 }
 
-.quality-selector-option.current-option {
-    background-color: #1a5f2d;
+.quality-selector-option .option-mark {
+    min-width: 25px;;
+    text-align: center;
+    margin-left: 15px;
+    font-weight: bold;
 }
 
 .quality-selector-option .quality-resolution {
-    color: #a7c5ae;
+    color: #656060;
     font-size: 12px;
     margin-right: 10px;
+    margin-left: 20px;
     height: 25px;
-    background-color: #1a5f2d;
+    background-color: #f1e5d8;
     line-height: 25px;
     padding: 0 5px;
     border-radius: 6px;
-}
-
-.quality-selector-option.current-option .quality-resolution {
-    background-color: #368247;
-}
-
-.quality-selector-option:hover .quality-resolution {
-    background-color: #154e24;
-}
-
-.quality-selector-option.current-option:hover .quality-resolution {
-    background-color: #368247;
+    border: 1px solid #b1aba8;
+    min-width: fit-content;
 }
 
 .quality-selector-option .quality-name {
-    float: left;
-    color: #e4e4e4;
+    flex: auto;
+    color: #544341;
     margin-left: 15px;
 }
 
 .quality-selector-option:hover .quality-name {
-    color: #f3f3f3;
+    color: #312e2c;
+}
+
+@media (max-aspect-ratio: 1560/1060) {
+    .quality-selector-menu {
+        top: 58px;
+        left: 0;
+    }
 }

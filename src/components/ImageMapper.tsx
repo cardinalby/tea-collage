@@ -15,11 +15,9 @@ export interface ImageMapperArea {
     coords: number[],
     href?: string,
     shape: ShapeName,
-    preFillColor?: string,
     fillColor?: string,
     lineWidth?: number,
     strokeColor?: string
-    preFillStrokeColor?: string
 }
 
 export interface ImageMapperMap {
@@ -35,8 +33,6 @@ export interface ImageMapperSizeProps {
 export interface ImageMapperStyleProps {
     fillColor?: string,
     strokeColor?: string,
-    preFillColor?: string,
-    preFillStrokeColor?: string,
     lineWidth?: number,
     containerClassName?: string
 }
@@ -124,8 +120,7 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
             "drawRect",
             "drawCircle",
             "drawPoly",
-            "initCanvas",
-            "renderPrefilledAreas"
+            "initCanvas"
         ].forEach(f => (this[f] = this[f].bind(this)));
         this.styles.map = props.onClick && { cursor: "pointer" };
     }
@@ -222,7 +217,6 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
             throw new Error("Can't get 2d context");
         }
         this.ctx.fillStyle = this.props.fillColor || '';
-        this.renderPrefilledAreas(this.ctx);
     }
 
     protected getAreasByGroup(group: string) {
@@ -258,7 +252,6 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         if (this.props.active && this.ctx && this.canvas) {
             this.selectedArea = undefined;
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.renderPrefilledAreas(this.ctx);
         }
 
         if (this.props.onMouseLeave) this.props.onMouseLeave(area, index, event);
@@ -292,22 +285,6 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
             this.initCanvas(this.canvas, this.container);
         }
         this.loadEvents.onLoad(target, preview, componentId);
-    }
-
-    protected renderPrefilledAreas(ctx: CanvasRenderingContext2D) {
-        this.getScaledMap(this.props.map, this.props.width, this.props.height)
-            .areas
-            .filter(area => area.preFillColor)
-            .forEach(area => {
-                const drawMethod = this.getDrawMethod(area.shape);
-                drawMethod && drawMethod(
-                    ctx,
-                    area.coords,
-                    area.preFillColor as string,
-                    area.lineWidth || this.props.lineWidth || ImageMapper.defaultProps.lineWidth,
-                    area.preFillStrokeColor || this.props.preFillStrokeColor || ImageMapper.defaultProps.strokeColor
-                );
-            });
     }
 
     renderAreas() {
