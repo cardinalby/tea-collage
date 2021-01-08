@@ -2,6 +2,7 @@ import React, {Component, CSSProperties, MouseEventHandler} from "react";
 import isEqual from "react-fast-compare";
 import memoize from "memoize-one";
 import {SmoothImageLoadEvents, SmoothImageLoadEventsWrapper, SmoothImage} from "./SmoothImage";
+import {TFunction} from "i18next";
 
 export type ImageMapperMouseEvent = (
     area: ImageMapperArea,
@@ -31,6 +32,7 @@ export interface ImageMapperSizeProps {
 }
 
 export interface ImageMapperStyleProps {
+    t?: TFunction,
     fillColor?: string,
     strokeColor?: string,
     lineWidth?: number,
@@ -303,9 +305,11 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         return this.getScaledMap(this.props.map, this.props.width, this.props.height)
             .areas
             .map((area: ImageMapperArea, index) => {
+                const teaName = area.group && this.props.t && this.props.t(`teas.${area.group}.name`);
                 return (
                     <area
-                        alt={area.group || area._id || index.toString()}
+                        title={teaName}
+                        alt={teaName}
                         key={area._id || index}
                         shape={area.shape}
                         coords={area.coords.join(",")}

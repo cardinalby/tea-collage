@@ -1,45 +1,50 @@
 {
   "teas": {
     "gu_shu_shu_cha": {
-      "name": "Гу Шу Шу Ча"
+      "name": "Gu Shu Shu Cha"
     },
     "shen_ajaloshan_shen_cha": {
-      "name": "Айлаошань Шэн Ча"
+      "name": "Ailaoshan' Shen Cha"
     },
     "shu_da_shi_cha": {
-      "name": "Да Ши Ча"
+      "name": "Da Shi Cha"
     },
     "shu_ailaoshan_leo": {
-      "name": "Айлаошань Леопард из серии Буфан"
+      "name": "Ailaoshan' Leopard from Bufan line"
     },
     "shu_bulan_cha_huan": {
-      "name": "Булан Ча Хуан"
+      "name": "Bulan Cha Huan"
     },
     "shu_cha_dao_shi": {
-      "name": "Ча Дао Ши"
+      "name": "Cha Dao Shi"
     },
     "shu_dai_czhu_shu_cha": {
-      "name": "Дай Цзю Шу Ча"
+      "name": "Dai Czu Shu Cha"
     },
     "shu_hatnik": {
-      "name": "Шу пуэр Хатник"
+      "name": "Shu Pu-erh Hatnik"
     },
     "shu_huanshan_mountain": {
-      "name": "Шу пуэр с горы Хуаншань"
+      "name": "Shu Pu-erh from Huan'shan' mountain"
     },
     "shu_lincan": {
-      "name": "Линьцан Шу Пуэр"
+      "name": "Lin'can' Shu Pu-erh"
     },
     "shu_shi_hao_shu_cha_10": {
-      "name": "Шу пуэр «Номер 10» из округа Пуэр"
+      "name": "Shu Pu-erh «Number 10» from Pu-erh district"
     },
     "shu_zoloto_menhaya": {
-      "name": "Золото Мэнхая"
+      "name": "Gold of Menhai"
     }
   },
   "sizes": {
     "large": "Large",
     "medium": "Medium",
     "small": "Small"
+  },
+  "actions": {
+    "enter_fullscreen": "Full screen",
+    "exit_fullscreen": "Exit full screen",
+    "select_picture_quality": "Select picture quality"
   }
 }

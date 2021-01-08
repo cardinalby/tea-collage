@@ -1,15 +1,14 @@
 import '../css/app.css';
 
 import '../i18n/config';
-import React, {useState} from "react";
+import React, {useMemo} from "react";
 import Collage from "./Collage";
 import {HashRouter, Route} from 'react-router-dom'
 import {RouteComponentProps, Redirect} from "react-router";
-import {QualitySelector} from "./QualitySelector";
 import collageSourcesSet, {CollageSources} from "../models/collageSourcesSet";
 import {getRecommendedCollageSize} from "../models/sizeAutoSelector";
-import {LanguageSelector} from "./LanguageSelector";
-import {FullScreenSwitch, isFullScreenEnabled} from "./FullScreenSwitch";
+import {ControlPanel} from "./ControlPanel";
+import {useStateSafe} from "../hooks/useStateSafe";
 
 type RoutesProps = [RouteComponentProps<any>];
 
@@ -23,7 +22,11 @@ function getRouteParam(routeProps: RoutesProps, paramName: string): string|undef
 }
 
 function App() {
-    const [collageSources, setCollageSources] = useState(collageSourcesSet.getSources(recommendedCollageSize));
+    const [collageSizeName, setCollageSizeName] = useStateSafe(recommendedCollageSize);
+    const collageSources = useMemo(() =>
+        collageSourcesSet.getSources(collageSizeName),
+        [collageSizeName]
+    );
 
     function renderContents(routeProps: RoutesProps) {
         const section = getRouteParam(routeProps, 'section');
@@ -37,19 +40,11 @@ function App() {
 
         return (
             <div className='app'>
-                <div className="control-panel">
-                    <QualitySelector
-                        sizes={collageSourcesSet.getSizes()}
-                        initSizeName={recommendedCollageSize}
-                        onChange={sizeName => setCollageSources(collageSourcesSet.getSources(sizeName))}
-                    />
-                    {isFullScreenEnabled() && <FullScreenSwitch/>}
-                    <div className='control-panel-center'/>
-                    <LanguageSelector/>
-                </div>
+
                 <div className={'main-area'}>
                     {mainArea}
                 </div>
+                <ControlPanel collageSizeName={collageSizeName} onCollageSizeChange={setCollageSizeName} />
             </div>
         );
     }

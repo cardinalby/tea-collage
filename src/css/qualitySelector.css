@@ -1,7 +1,3 @@
-.quality-selector {
-    position: relative;
-}
-
 .quality-selector > * {
     user-select: none;
 }
@@ -11,6 +7,7 @@
     cursor: default;
     width: 50px;
     height: 50px;
+    position: relative;
 }
 
 .quality-selector-button .quality-gear-icon {
@@ -54,12 +51,12 @@
     z-index: 200;
     border-radius: 15px;
     position: absolute;
-    top: 0;
-    left: 58px;
+    bottom: 8px;
+    right: 58px;
     min-width: max-content;
     display: flex;
     flex-direction: column;
-    filter: drop-shadow(8px 8px 8px black);
+    filter: drop-shadow(-2px -2px 8px black);
     cursor: default;
     overflow: hidden;
 }
@@ -114,7 +111,7 @@
 
 @media (max-aspect-ratio: 1560/1060) {
     .quality-selector-menu {
-        top: 58px;
-        left: 0;
+        bottom: 58px;
+        right: 8px;
     }
 }

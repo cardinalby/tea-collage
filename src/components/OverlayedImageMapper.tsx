@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import OverlayLayer from "./OverlayLayer";
 import ImageMapper, {
     ImageMapperBehaviorProps, ImageMapperMap,
@@ -8,6 +8,9 @@ import ImageMapper, {
 import {CollageSources} from "../models/collageSourcesSet";
 import {useFittedScale} from "../hooks/useFittedScale";
 import {classNames} from "../models/reactUtils";
+import {withTranslation} from "react-i18next";
+
+const ImageMapperTranslated = withTranslation()(ImageMapper);
 
 interface OverlayedImageMapperProps extends
     ImageMapperStyleProps,
@@ -54,7 +57,6 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
     const [overlayHoverOnTransparent, setOverlayHoverOnTransparent] = useState<boolean|undefined>(false);
     if (prevOverlayLayer.current !== props.overlayLayerId) {
         prevOverlayLayer.current = props.overlayLayerId;
-        setOverlayHoverOnTransparent(false);
     } else if (!props.overlayLayerId && overlayHoverOnTransparent) {
         setOverlayHoverOnTransparent(false);
     }
@@ -108,7 +110,7 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
                  props.overlayLayerId && overlayHoverOnTransparent === undefined && 'overlay-no-hover',
              )}
         >
-            <ImageMapper {...imgMapperProps} />
+            <ImageMapperTranslated {...imgMapperProps} />
             {overlay}
             {props.children}
         </div>

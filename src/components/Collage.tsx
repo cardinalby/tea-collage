@@ -1,5 +1,5 @@
 import '../css/collage.css';
-import React, {useState} from "react";
+import React from "react";
 import OverlayedImageMapper from "./OverlayedImageMapper";
 import collageSourcesSet, {CollageSources} from "../models/collageSourcesSet";
 import imgLoadingEvents from "../hooks/useImgLoadingEvents";
@@ -8,7 +8,7 @@ import {ImageMapperArea} from "./ImageMapper";
 import {useOverlayImagesPreloader} from "../hooks/useOverlayImagesPreloader";
 import {useMouseHoverArea} from "../hooks/useMouseHoverArea";
 import { useHistory } from "react-router-dom";
-import {useIsMounted} from "../hooks/useIsMounted";
+import {useStateSafe} from "../hooks/useStateSafe";
 
 export interface CollageProps {
     layerId?: string
@@ -16,9 +16,8 @@ export interface CollageProps {
 }
 
 function Collage(props: CollageProps) {
-    const isMounted = useIsMounted();
     const imagesLoadingHandler = imgLoadingEvents();
-    const [containerRef, setContainerRef] = useState<HTMLDivElement|null>(null);
+    const [containerRef, setContainerRef] = useStateSafe<HTMLDivElement|null>(null);
 
     const history = useHistory();
     const mouseHoverArea = useMouseHoverArea(1000, 1500);
@@ -59,7 +58,7 @@ function Collage(props: CollageProps) {
         : '';
 
     return (
-        <div className="collage-container" ref={node => isMounted && setContainerRef(node)}>
+        <div className="collage-container" ref={setContainerRef}>
             {imageMapper}
         </div>
     );

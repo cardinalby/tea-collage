@@ -41,5 +41,10 @@
     "large": "Большой",
     "medium": "Средний",
     "small": "Маленький"
+  },
+  "actions": {
+    "enter_fullscreen": "Полноэкранный режим",
+    "exit_fullscreen": "Выйти из полноэкранного режима",
+    "select_picture_quality": "Выбрать качество картинки"
   }
 }
