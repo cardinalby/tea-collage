@@ -1,3 +1,4 @@
+import '../css/overlay.css';
 import React, {MouseEvent, useRef, useState} from 'react';
 import {OverlayDimensions} from "../models/collageSourcesSet";
 import {SmoothImageLoadEvents, SmoothImageLoadEventsWrapper, SmoothImage} from "./SmoothImage";

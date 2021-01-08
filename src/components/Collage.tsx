@@ -1,3 +1,4 @@
+import '../css/collage.css';
 import React, {useState} from "react";
 import OverlayedImageMapper from "./OverlayedImageMapper";
 import collageSourcesSet, {CollageSources} from "../models/collageSourcesSet";

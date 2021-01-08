@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Wrapper, Menu, MenuItem } from 'react-aria-menubutton';
 import {classNames} from "../models/reactUtils";
 import {ReactComponent as GearIcon} from "../images/quality_gear.svg";
+import '../css/qualitySelector.css';
 
 export interface QualitySelectorProps {
     sizes: generatedJson.CollageSizeDef[],

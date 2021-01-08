@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import OverlayLayer from "./OverlayLayer";
 import ImageMapper, {
     ImageMapperBehaviorProps, ImageMapperMap,
@@ -50,7 +50,14 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
         props.collageSources.full.background.height
         );
 
+    const prevOverlayLayer = useRef<string|undefined>(undefined);
     const [overlayHoverOnTransparent, setOverlayHoverOnTransparent] = useState<boolean|undefined>(false);
+    if (prevOverlayLayer.current !== props.overlayLayerId) {
+        prevOverlayLayer.current = props.overlayLayerId;
+        setOverlayHoverOnTransparent(false);
+    } else if (!props.overlayLayerId && overlayHoverOnTransparent) {
+        setOverlayHoverOnTransparent(false);
+    }
 
     function onOverlayClick(event, isTransparentArea: boolean) {
         if (props.overlayLayerId && props.onOverlayClick) {

@@ -1,9 +1,4 @@
 import '../css/app.css';
-import '../css/spinner.css';
-import '../css/overlay.css';
-import '../css/collage.css';
-import '../css/smoothImage.css';
-import '../css/qualitySelector.css';
 
 import '../i18n/config';
 import React, {useState} from "react";
@@ -14,6 +9,7 @@ import {QualitySelector} from "./QualitySelector";
 import collageSourcesSet, {CollageSources} from "../models/collageSourcesSet";
 import {getRecommendedCollageSize} from "../models/sizeAutoSelector";
 import {LanguageSelector} from "./LanguageSelector";
+import {FullScreenSwitch, isFullScreenEnabled} from "./FullScreenSwitch";
 
 type RoutesProps = [RouteComponentProps<any>];
 
@@ -47,6 +43,7 @@ function App() {
                         initSizeName={recommendedCollageSize}
                         onChange={sizeName => setCollageSources(collageSourcesSet.getSources(sizeName))}
                     />
+                    {isFullScreenEnabled() && <FullScreenSwitch/>}
                     <div className='control-panel-center'/>
                     <LanguageSelector/>
                 </div>
@@ -61,7 +58,9 @@ function App() {
         <HashRouter>
             <Route path="/:section(collage|description)/:layerId?"
                    render={(...routeProps) => renderContents(routeProps)}/>
-            <Redirect exact from="/" to="/collage/" />
+            <Route exact path="/">
+                <Redirect to="/collage/" />
+            </Route>
         </HashRouter>
     );
 }

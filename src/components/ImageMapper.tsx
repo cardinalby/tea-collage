@@ -184,21 +184,33 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
     }
 
     protected drawPoly(ctx: CanvasRenderingContext2D, coords, fillColor, lineWidth, strokeColor) {
+
+        function limit(value: number, min: number, max: number): number {
+            return value < min ? min : (value > max ? max : value);
+        }
+        function handleBorder(value: number, maxSize: number): number {
+            return limit(value, lineWidth/2, maxSize - lineWidth/2);
+        }
+        function handleCoordsPair(coordsPair: [number, number]): [number, number] {
+            return [
+                handleBorder(coordsPair[0], ctx.canvas.clientWidth),
+                handleBorder(coordsPair[1], ctx.canvas.clientHeight)
+            ];
+        }
         coords = coords.reduce(
             (a, v, i, s) => (i % 2 ? a : [...a, s.slice(i, i + 2)]),
             []
         );
-
         ctx.fillStyle = fillColor;
         ctx.beginPath();
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = strokeColor;
         let first = coords.unshift();
-        ctx.moveTo(first[0], first[1]);
-        coords.forEach(c => ctx.lineTo(c[0], c[1]));
+        ctx.moveTo(...handleCoordsPair(first));
+        coords.forEach(pair => ctx.lineTo(...handleCoordsPair(pair)));
         ctx.closePath();
-        ctx.stroke();
         ctx.fill();
+        ctx.stroke();
         ctx.fillStyle = this.props.fillColor || '';
     }
 

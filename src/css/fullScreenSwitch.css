@@ -1,0 +1,24 @@
+.full-screen-switch {
+    position: relative;
+    display: block;
+    cursor: default;
+    width: 50px;
+    height: 50px;
+}
+
+.full-screen-switch svg {
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.full-screen-switch svg path {
+    fill: #dcd0cc;
+}
+
+.full-screen-switch:hover svg path {
+    fill: #ffffff;
+}
