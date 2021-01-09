@@ -3,8 +3,9 @@ import collageSourcesSet from "../models/collageSourcesSet";
 import {FullScreenSwitch, isFullScreenEnabled} from "./FullScreenSwitch";
 import {LanguageSelector} from "./LanguageSelector";
 import React from "react";
-import {useStateSafe} from "../hooks/useStateSafe";
 import {useTranslation} from "react-i18next";
+import {GithubLink} from "./GithubLink";
+import {useLanguage} from "../hooks/useLanguage";
 
 export interface ControlPanelProps {
     collageSizeName: string,
@@ -13,16 +14,13 @@ export interface ControlPanelProps {
 
 export function ControlPanel(props: ControlPanelProps) {
     const {i18n} = useTranslation();
-    const [currentLang, setCurrentLang] = useStateSafe(i18n.language);
-
-    function onLanguageChange(lang: string) {
-        i18n.changeLanguage(lang)
-            .then(() => setCurrentLang(lang));
-    }
+    const {currentLang, changeLanguage} = useLanguage(i18n);
 
     return (
         <div className="control-panel">
-            <LanguageSelector language={currentLang} onChange={onLanguageChange}/>
+            <LanguageSelector language={currentLang} onChange={changeLanguage}/>
+            <div className='control-panel-center'/>
+            <GithubLink url={'https://github.com/cardinalby/tea-collage'}/>
             <div className='control-panel-center'/>
             <QualitySelector
                 sizes={collageSourcesSet.getSizes()}

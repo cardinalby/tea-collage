@@ -92,8 +92,8 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
 
     const imgMapperProps = {
         ...getImageMapperProps(props),
-        width: props.collageSources.full.background.width * scale,
-        height: props.collageSources.full.background.height * scale,
+        width: Math.round(props.collageSources.full.background.width * scale),
+        height: Math.round(props.collageSources.full.background.height * scale),
         containerClassName: 'collage-bg',
         src: props.collageSources.getBackgroundUrl(false),
         previewSrc: props.collageSources.getBackgroundUrl(true),

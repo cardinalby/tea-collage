@@ -1,23 +1,25 @@
 import i18n from 'i18next';
-import enTranslation from './en/translation.json';
-import ruTranslation from './ru/translation.json';
 import { initReactI18next } from 'react-i18next';
 import detector from "i18next-browser-languagedetector";
-
-export const resources = {
-    en: {
-        translation: enTranslation,
-    },
-    ru: {
-        translation: ruTranslation,
-    },
-} as const;
+import Backend from 'i18next-fetch-backend';
 
 i18n
     .use(detector)
+    .use(Backend)
     .use(initReactI18next)
     .init({
-        lng: 'en',
-        fallbackLng: 'en',
-        resources
+        detection: {
+            lookupQuerystring: undefined,
+            lookupCookie: undefined,
+            lookupLocalStorage: 'i18nextLng',
+            lookupSessionStorage: undefined,
+            lookupFromPathIndex: undefined,
+            lookupFromSubdomainIndex: undefined,
+        },
+        supportedLngs: ['en', 'ru'],
+        load: 'languageOnly',
+        backend: {
+            loadPath: process.env.PUBLIC_URL + '/i18n/{{lng}}.json',
+        },
+        //resources
     });

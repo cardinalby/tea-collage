@@ -8,6 +8,8 @@ body {
   margin: 8px;
   background-color: black;
   height: calc(100% - 8px);
+  min-width: 300px;
+  min-height: 300px;
 }
 
 html {

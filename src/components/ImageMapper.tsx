@@ -191,7 +191,7 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
             return value < min ? min : (value > max ? max : value);
         }
         function handleBorder(value: number, maxSize: number): number {
-            return limit(value, lineWidth/2, maxSize - lineWidth/2);
+            return limit(value, Math.floor(lineWidth/2), Math.ceil(maxSize - lineWidth/2));
         }
         function handleCoordsPair(coordsPair: [number, number]): [number, number] {
             return [
@@ -220,7 +220,8 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         const width = this.props.width || (this.img && this.img.clientWidth);
         const height = this.props.height || (this.img && this.img.clientHeight);
         if (!width || !height) {
-            throw new Error("Can't determine canvas size");
+            console.error("Can't determine canvas size");
+            return;
         }
         canvas.width = width;
         canvas.height = height;

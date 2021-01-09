@@ -4,39 +4,39 @@
   height: 100%;
 }
 
+.horizontal-control-panel .app {
+  flex-direction: column;
+}
+
 .app .main-area {
-  width: calc(100% - 58px);
+  width: calc(100% - 53px);
   height: 100%;
 }
 
+.horizontal-control-panel .app .main-area {
+  width: 100%;
+  height: calc(100% - 53px);
+}
+
 .app .control-panel {
-  width: 50px;
+  width: 45px;
   height: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
   margin-left: 8px;
+  overflow: hidden;
+}
+
+.horizontal-control-panel .app .control-panel {
+  width: calc(100% - 4px);
+  margin-top: 8px;
+  height: 45px;
+  flex-direction: row;
+  margin-right: 0;
 }
 
 .app .control-panel .control-panel-center {
   flex-grow: 1;
-}
-
-@media (max-aspect-ratio: 1560/1060) {
-  .app {
-    flex-direction: column;
-  }
-
-  .app .main-area {
-    width: 100%;
-    height: calc(100% - 58px);
-  }
-
-  .app .control-panel {
-    width: calc(100% - 4px);
-    margin-top: 8px;
-    height: 50px;
-    flex-direction: row;
-    margin-right: 0;
-  }
 }
