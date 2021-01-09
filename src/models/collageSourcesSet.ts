@@ -93,6 +93,8 @@ class CollageSourcesSet {
             collageSizes[0];
     }
 
+    public readonly collageAspectRatio = collageSizes[0].width / collageSizes[0].height;
+
     // noinspection JSUnusedGlobalSymbols
     public getSizes(): generatedJson.CollageSizeDef[] {
         return Array.from(this.sizesMap.values());
