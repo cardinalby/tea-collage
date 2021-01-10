@@ -6,7 +6,7 @@
     height: 100%;
     left: 0;
     top: 0;
-    transition: filter 0.5s;
+    transition: filter 0.3s;
 }
 
 .overlay-shown.overlay-hover-on-transparent .collage-overlay-container {

@@ -6,10 +6,12 @@ import {adjustPsdResult, resizeFile} from "./resizing";
 import {processPsd} from "./psdParsing/processPsd";
 import {createFullCollageInfo, createPreviewCollageInfo} from "./jsonExport/collageInfo";
 import {saveSizes} from "./jsonExport/sizes";
+import {makePhotosPreviews} from "./photosPreviews";
+import {createPhotosInfo} from "./jsonExport/photosInfo";
 
 const os = require('os');
 const path = require('path')
-const psdConfig = require('../../resources/psd-config.json');
+const processingConfig = require('../../resources/processing-config.json');
 
 async function emptyDir(dirPath: string): Promise<void> {
     await fs.ensureDir(dirPath);
@@ -34,7 +36,7 @@ async function saveResizedBackground(
     psdResultResized.backgroundFileName = await resizeFile(
         path.join(consts.EXTRACTED_DIR, psdResult.backgroundFileName),
         destDir,
-        preview ? resizedScale * 1.7 : resizedScale,
+        {scale: preview ? resizedScale * 1.7 : resizedScale},
         'jpg',
         {
             quality: preview ? 60 : 100,
@@ -47,11 +49,11 @@ async function saveResizedBackground(
 (async function() {
     await emptyDir(consts.EXTRACTED_DIR);
     const psdResult = await processPsd(
-        path.join(consts.RESOURCES_DIR, psdConfig.psdFile),
+        path.join(consts.RESOURCES_DIR, processingConfig.psdFile),
         consts.EXTRACTED_DIR,
-        psdConfig.layers.overlayGroup,
-        psdConfig.layers.areasGroup,
-        psdConfig.layers.background
+        processingConfig.layers.overlayGroup,
+        processingConfig.layers.areasGroup,
+        processingConfig.layers.background
     );
 
     await fs.ensureDir(consts.COLLAGE_INFO_DIR);
@@ -61,7 +63,7 @@ async function saveResizedBackground(
 
     await emptyDir(consts.RESIZED_DIR);
 
-    for (const size of psdConfig.targetSizes) {
+    for (const size of processingConfig.targetSizes) {
         await emptyDir(path.join(consts.RESIZED_DIR, size.name));
         const scale = size.width ? (size.width / psdResult.width) : (size.height / psdResult.height);
 
@@ -73,12 +75,12 @@ async function saveResizedBackground(
         await saveResizedBackground(psdResult, psdResultCopy, size.preview, destDir);
 
         await fs.ensureDir(path.join(destDir, psdResultCopy.overlayDirName));
-        for (const layer of psdResultCopy.overlayLayers) {
+        const overlaysResizing = psdResultCopy.overlayLayers.map(async layer => {
             const fileName = await resizeFile(
                 path.join(consts.EXTRACTED_DIR, layer.fileName),
                 path.join(destDir, psdResult.overlayDirName),
-                scale,
-                'webp',
+                {scale: scale},
+                'png',
                 {
                     grayscale: size.preview,
                     quality: size.preview ? 50: 100,
@@ -86,7 +88,8 @@ async function saveResizedBackground(
                 }
             )
             layer.fileName = path.join(psdResult.overlayDirName, fileName);
-        }
+        });
+        await Promise.all(overlaysResizing);
 
         const collageInfoFile = path.join(consts.COLLAGE_INFO_DIR, size.name + '.json');
         process.stdout.write(`Preparing ${collageInfoFile}...`);
@@ -96,9 +99,22 @@ async function saveResizedBackground(
             : createFullCollageInfo(psdResultCopy);
 
         await fs.writeJson(collageInfoFile, collage);
-        process.stdout.write('done' + os.EOL)
+        process.stdout.write('done' + os.EOL);
     }
     await fs.remove(consts.EXTRACTED_DIR);
     await saveSizes(psdResult);
+
+    const photosPreviewDir = path.join(consts.PHOTOS_DIR, consts.PHOTOS_PREVIEW_DIR);
+    await emptyDir(photosPreviewDir);
+    const photoFiles = await makePhotosPreviews(consts.PHOTOS_DIR, photosPreviewDir);
+    const photosInfoFilePath = path.join(consts.COLLAGE_INFO_DIR, consts.PHOTOS_INFO_JSON);
+    process.stdout.write(`Preparing ${photosInfoFilePath}...`);
+    const photosInfo = createPhotosInfo(
+        photoFiles,
+        psdResult.areaLayers.map(layer => layer.name),
+        consts.PHOTOS_PREVIEW_DIR
+    );
+    await fs.writeJson(photosInfoFilePath, photosInfo);
+    process.stdout.write('done' + os.EOL);
 })();
 

@@ -1,6 +1,5 @@
 import sharp from 'sharp';
 import {PsdParsingResult} from "./psdParsing/psdParsingResult";
-const os = require('os');
 const path = require('path');
 
 /**
@@ -22,10 +21,47 @@ export interface ResizingOptions {
     grayscale?: boolean
 }
 
+export interface SizeSettings {
+    scale?: number
+    width?: number,
+    height?: number
+}
+
+function getNewSize(currentWidth: number, currentHeight: number, size: SizeSettings): {width: number, height: number} {
+    if (size.scale !== undefined) {
+        return {
+            width: Math.round(currentWidth * size.scale),
+            height: Math.round(currentHeight * size.scale),
+        }
+    }
+    if (size.width !== undefined && size.height === undefined) {
+        return {
+            width: size.width,
+            height: Math.round(currentHeight * size.width / currentWidth)
+        };
+    }
+    if (size.height !== undefined && size.width === undefined) {
+        return {
+            width: Math.round(currentWidth * size.height / currentHeight),
+            height: size.height
+        };
+    }
+    if (size.height !== undefined && size.width !== undefined) {
+        return {
+            width: size.width,
+            height: size.height
+        }
+    }
+    return {
+        width: currentWidth,
+        height: currentHeight
+    };
+}
+
 export async function resizeFile(
     srcFilePath: string,
     targetDir: string,
-    scale: number,
+    size: SizeSettings,
     format: ImageFileFormat,
     options: ResizingOptions = {}
 ): Promise<string>
@@ -35,14 +71,10 @@ export async function resizeFile(
     if (!metadata.width || !metadata.height) {
         throw new Error(`Can't read dimensions of ${srcFilePath} image`);
     }
-    const newSize = {
-        width: Math.round(metadata.width * scale),
-        height: Math.round(metadata.height * scale),
-    };
-
+    const newSize = getNewSize(metadata.width, metadata.height, size);
     const targetFileName = path.parse(srcFilePath).name + '.' + format;
     const targetFilePath = path.join(targetDir, targetFileName);
-    process.stdout.write(`Resizing ${targetFilePath}...`);
+    console.log(`Resizing ${targetFilePath}`);
 
     img.resize(newSize)
     if (options.grayscale) {
@@ -72,12 +104,8 @@ export async function resizeFile(
             });
     }
 
-    return img
-        .toFile(targetFilePath)
-        .then(() => {
-            process.stdout.write('done' + os.EOL);
-            return targetFileName;
-        });
+    await img.toFile(targetFilePath);
+    return targetFileName;
 }
 
 export function adjustPsdResult(psdResult: PsdParsingResult, resizeFactor: number): void {

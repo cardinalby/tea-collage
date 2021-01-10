@@ -10,6 +10,7 @@ export async function extractFromGroup(
     const layers = group.children().filter(layer => layer.type === 'layer');
     checkNamesAreUnique(layers);
 
+    console.log(`Extracting overlay layers in ${os.cpus().length} threads...`);
     const staticPool = new workerThreads.StaticPool({
         size: os.cpus().length,
         task: './resourcesProcessing/build/psdParsing/layerExtractingThread.js'

@@ -1,7 +1,7 @@
 import '../css/collage.css';
 import React from "react";
 import OverlayedImageMapper from "./OverlayedImageMapper";
-import collageSourcesSet, {CollageSources} from "../models/collageSourcesSet";
+import collageSourcesSet from "../models/collageSourcesSet";
 import imgLoadingEvents from "../hooks/useImgLoadingEvents";
 import TeapotSpinner from "./TeapotSpinner";
 import {ImageMapperArea} from "./ImageMapper";
@@ -9,6 +9,7 @@ import {useOverlayImagesPreloader} from "../hooks/useOverlayImagesPreloader";
 import {useMouseHoverArea} from "../hooks/useMouseHoverArea";
 import { useHistory } from "react-router-dom";
 import {useStateSafe} from "../hooks/useStateSafe";
+import {CollageSources} from "../models/collageSources";
 
 export interface CollageProps {
     layerId?: string

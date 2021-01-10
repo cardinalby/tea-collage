@@ -3,7 +3,7 @@ import * as consts from "../consts";
 import * as fs from "fs-extra";
 import path from "path";
 import * as os from "os";
-const psdConfig = require('../../../resources/psd-config.json');
+const psdConfig = require('../../../resources/processing-config.json');
 import CollageSizeDef = generatedJson.CollageSizeDef;
 const getFolderSize = require('get-folder-size');
 

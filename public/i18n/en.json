@@ -22,7 +22,11 @@
       "name": "Dai Czu Shu Cha"
     },
     "shu_hatnik": {
-      "name": "Shu Pu-erh Hatnik"
+      "name": "Shu Pu-erh Hatnik",
+      "description": [
+        "dwedwdwe",
+        "puppupupu"
+      ]
     },
     "shu_huanshan_mountain": {
       "name": "Shu Pu-erh from Huan'shan' mountain"

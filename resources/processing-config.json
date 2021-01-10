@@ -10,5 +10,8 @@
     { "name": "medium", "width": 1500 },
     { "name": "small", "width": 1024 },
     { "name": "preview", "width": 350, "preview": true }
-  ]
+  ],
+  "photosPreviews": {
+    "width": 300
+  }
 }

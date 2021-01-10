@@ -1,10 +1,10 @@
 import '../css/overlay.css';
 import React, {MouseEvent, useRef, useState} from 'react';
-import {OverlayDimensions} from "../models/collageSourcesSet";
 import {SmoothImageLoadEvents, SmoothImageLoadEventsWrapper, SmoothImage} from "./SmoothImage";
 import {getCanvasPointAlpha} from "../models/canvasUtils";
 import {Point2d} from "../models/point2d";
 import { useTranslation } from 'react-i18next';
+import {OverlayDimensions} from "../models/collageSources";
 
 type DivMouseEvent = MouseEvent<HTMLDivElement>;
 type ImgMouseEvent = MouseEvent<HTMLImageElement>;

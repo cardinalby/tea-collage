@@ -5,10 +5,10 @@ import ImageMapper, {
     ImageMapperProps,
     ImageMapperStyleProps
 } from "./ImageMapper";
-import {CollageSources} from "../models/collageSourcesSet";
 import {useFittedScale} from "../hooks/useFittedScale";
 import {classNames} from "../models/reactUtils";
 import {withTranslation} from "react-i18next";
+import {CollageSources} from "../models/collageSources";
 
 const ImageMapperTranslated = withTranslation()(ImageMapper);
 

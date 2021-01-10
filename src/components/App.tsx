@@ -5,12 +5,13 @@ import React, {useMemo} from "react";
 import Collage from "./Collage";
 import {HashRouter, Route} from 'react-router-dom'
 import {RouteComponentProps, Redirect} from "react-router";
-import collageSourcesSet, {CollageSources} from "../models/collageSourcesSet";
+import collageSourcesSet from "../models/collageSourcesSet";
 import {getRecommendedCollageSize} from "../models/sizeAutoSelector";
 import {ControlPanel} from "./ControlPanel";
 import {useStateSafe} from "../hooks/useStateSafe";
 import {withTranslation} from "react-i18next";
 import {useWindowAspectRatioClass} from "../hooks/useWindowAspectRatio";
+import {CollageSources} from "../models/collageSources";
 
 type RoutesProps = [RouteComponentProps<any>];
 

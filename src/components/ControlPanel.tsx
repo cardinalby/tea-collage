@@ -13,7 +13,8 @@ export interface ControlPanelProps {
 }
 
 export function ControlPanel(props: ControlPanelProps) {
-    const {i18n} = useTranslation();
+    const {i18n, t} = useTranslation();
+    console.log(t('teas.shu_hatnik.description', { returnObjects: true }));
     const {currentLang, changeLanguage} = useLanguage(i18n);
 
     return (
