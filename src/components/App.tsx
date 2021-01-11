@@ -9,9 +9,9 @@ import collageSourcesSet from "../models/collageSourcesSet";
 import {getRecommendedCollageSize} from "../models/sizeAutoSelector";
 import {ControlPanel} from "./ControlPanel";
 import {useStateSafe} from "../hooks/useStateSafe";
-import {withTranslation} from "react-i18next";
+import {useTranslation, withTranslation} from "react-i18next";
 import {useWindowAspectRatioClass} from "../hooks/useWindowAspectRatio";
-import {CollageSources} from "../models/collageSources";
+import {InfoWindow} from "./InfoWindow";
 
 type RoutesProps = [RouteComponentProps<any>];
 
@@ -36,14 +36,14 @@ function App() {
 
     function renderContents(routeProps: RoutesProps) {
         const section = getRouteParam(routeProps, 'section');
-        const layerId = getRouteParam(routeProps, 'layerId');
+        const itemId = getRouteParam(routeProps, 'itemId');
 
-        const TranslatedContents = withTranslation()(() => {
+        const TranslatedContents = withTranslation()((props) => {
             return (
-                <div className='app'>
+                <div className='app' lang={props.i18n && props.i18n.language}>
                     <div className={'main-area'}>
-                        {section === 'collage' && renderCollage(collageSources, layerId)}
-                        {section === 'description' && renderDescription(layerId)}
+                        {section === 'collage' && <Collage layerId={itemId} collageSources={collageSources}/>}
+                        {section === 'description' && <InfoWindow itemId={itemId}/>}
                     </div>
                     <ControlPanel collageSizeName={collageSizeName} onCollageSizeChange={setCollageSizeName}/>
                 </div>
@@ -59,24 +59,13 @@ function App() {
 
     return (
         <HashRouter>
-            <Route path="/:section(collage|description)/:layerId?"
+            <Route path="/:section(collage|description)/:itemId?"
                    render={(...routeProps) => renderContents(routeProps)}/>
             <Route exact path="/">
                 <Redirect to="/collage/" />
             </Route>
         </HashRouter>
     );
-}
-
-function renderCollage(collageSources: CollageSources, layerId?: string) {
-    return <Collage layerId={layerId} collageSources={collageSources}/>
-}
-
-function renderDescription(layerId?: string) {
-    return <div>
-        <h1>{layerId}</h1>
-        Description
-    </div>
 }
 
 export default App;

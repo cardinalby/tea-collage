@@ -34,7 +34,7 @@ function Collage(props: CollageProps) {
         if (isTransparentArea) {
             history.replace('/collage/');
         } else {
-            console.log(layerId);
+            history.push(`/description/${layerId}`)
         }
     }
 

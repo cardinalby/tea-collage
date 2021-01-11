@@ -1,5 +1,5 @@
 import '../css/smoothImage.css';
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {HTMLAttributes, useEffect, useMemo, useRef, useState} from "react";
 import {classNames} from "../models/reactUtils";
 import {useComponentId} from "../hooks/useComponentId";
 
@@ -33,6 +33,7 @@ export interface SmoothImageProps {
     src: string,
     previewSrc?: string,
     imgProps: React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,
+    containerProps?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
     loadEvents?: SmoothImageLoadEvents
 }
 
@@ -106,7 +107,7 @@ export function SmoothImage(props: SmoothImageProps) {
         classNames(props.imgProps && props.imgProps.className, value);
 
     return(
-        <div>
+        <div {...props.containerProps}>
             {props.previewSrc &&
                 <img
                     src={props.previewSrc}
@@ -140,7 +141,7 @@ export function SmoothImage(props: SmoothImageProps) {
                 ])}
                 style={{
                     ...style,
-                    position: 'absolute'
+                    position: 'relative'
                 }}
             />
         </div>
