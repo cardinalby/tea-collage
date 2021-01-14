@@ -1,5 +1,5 @@
 import '../css/smoothImage.css';
-import React, {HTMLAttributes, useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {classNames} from "../models/reactUtils";
 import {useComponentId} from "../hooks/useComponentId";
 

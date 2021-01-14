@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {MouseEvent, useRef, useState} from "react";
 import OverlayLayer from "./OverlayLayer";
 import ImageMapper, {
     ImageMapperBehaviorProps, ImageMapperMap,
@@ -20,7 +20,7 @@ interface OverlayedImageMapperProps extends
     areasMap: ImageMapperMap,
     fitToElement: HTMLElement,
     overlayLayerId?: string,
-    onOverlayClick?: (event, layerId: string, isTransparentArea: boolean) => void,
+    onOverlayClick?: (event: MouseEvent, layerId: string, isTransparentArea: boolean) => void,
     children?: JSX.Element
 }
 
@@ -61,7 +61,7 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
         setOverlayHoverOnTransparent(false);
     }
 
-    function onOverlayClick(event, isTransparentArea: boolean) {
+    function onOverlayClick(event: MouseEvent, isTransparentArea: boolean) {
         if (props.overlayLayerId && props.onOverlayClick) {
             props.onOverlayClick(event, props.overlayLayerId, isTransparentArea);
         }

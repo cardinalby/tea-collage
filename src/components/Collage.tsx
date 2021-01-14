@@ -1,5 +1,5 @@
 import '../css/collage.css';
-import React from "react";
+import React, {MouseEvent} from "react";
 import OverlayedImageMapper from "./OverlayedImageMapper";
 import collageSourcesSet from "../models/collageSourcesSet";
 import imgLoadingEvents from "../hooks/useImgLoadingEvents";
@@ -24,22 +24,34 @@ function Collage(props: CollageProps) {
     const mouseHoverArea = useMouseHoverArea(1000, 1500);
     useOverlayImagesPreloader(props.collageSources, true, mouseHoverArea.preloadGroup || false);
 
+    function closeOverlay() {
+        if (props.layerId) {
+            history.replace('/collage/');
+        }
+    }
+
+    function onContainerClick(event: MouseEvent) {
+        if (event.target === event.currentTarget) {
+            closeOverlay();
+        }
+    }
+
     function onAreaClick(area: ImageMapperArea) {
         if (area.group) {
             history.replace(`/collage/${area.group}`);
         }
     }
 
-    function onOverlayClick(event, layerId: string, isTransparentArea: boolean) {
+    function onOverlayClick(event: MouseEvent, layerId: string, isTransparentArea: boolean) {
         if (isTransparentArea) {
-            history.replace('/collage/');
+            closeOverlay();
         } else {
             history.push(`/description/${layerId}`)
         }
     }
 
-    const imageMapper = containerRef
-        ? <OverlayedImageMapper
+    const imageMapper = containerRef &&
+        <OverlayedImageMapper
             collageSources={props.collageSources}
             areasMap={collageSourcesSet.getAreasMap()}
             overlayLayerId={props.layerId}
@@ -55,11 +67,13 @@ function Collage(props: CollageProps) {
                 active={imagesLoadingHandler.isLoading}
                 preview={imagesLoadingHandler.isPreview}
             />
-        </OverlayedImageMapper>
-        : '';
+        </OverlayedImageMapper>;
 
     return (
-        <div className="collage-container" ref={setContainerRef}>
+        <div className="collage-container"
+             ref={setContainerRef}
+             onClick={onContainerClick}
+        >
             {imageMapper}
         </div>
     );

@@ -27,9 +27,10 @@ export function InfoWindow(props: InfoWindowProps) {
         ? photosSources.getTeaPhotoUrl(props.itemId, true)
         : photosSources.getPhotoUrl('about.jpg', true);
 
-    const paragraphs = paragraphsContent.map((paragraph, index) => <p key={index}>{paragraph}</p>);
+    const paragraphs = paragraphsContent &&
+        paragraphsContent.map((paragraph, index) => <p key={index}>{paragraph}</p>);
 
-    const [isImgZoomed, setImgZoomed] = useState(true);
+    const [isImgZoomed, setImgZoomed] = useState(false);
 
     function onCloseClick() {
         history.replace('/collage/');
@@ -41,9 +42,11 @@ export function InfoWindow(props: InfoWindowProps) {
 
     return (
         <div className='info-window'>
-            <div className='title'>{title}</div>
-            <div className='info-close' onClick={onCloseClick}>×</div>
+            <div className='title'>
+                <div className='info-close' onClick={onCloseClick} title={t('actions.close')}>×</div>
+            </div>
             <div className='info-container'>
+                <div className='title-text'>{title}</div>
                 {
                     imgSrc &&
                     <SmoothImage
