@@ -1,5 +1,6 @@
 import '../css/infoWindow.css';
 import photosSources from "../models/photosSources";
+import {ReactComponent as CloseIcon} from "../images/close_icon.svg";
 import {SmoothImage} from "./SmoothImage";
 import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
@@ -42,9 +43,7 @@ export function InfoWindow(props: InfoWindowProps) {
 
     return (
         <div className='info-window'>
-            <div className='title'>
-                <div className='info-close' onClick={onCloseClick} title={t('actions.close')}>×</div>
-            </div>
+            <CloseIcon className='info-close' onClick={onCloseClick} title={t('actions.close')}/>
             <div className='info-container'>
                 <div className='title-text'>{title}</div>
                 {
