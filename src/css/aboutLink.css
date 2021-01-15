@@ -1,0 +1,21 @@
+.about-link {
+    width: 34px;
+    height: 34px;
+    position: relative;
+    overflow: hidden;
+    line-height: 28px;
+    font-size: 25px;
+    text-align: center;
+    font-weight: bolder;
+    border-radius: 50%;
+    color: #dcd0cc;
+    cursor: pointer;
+    box-sizing: border-box;
+    border: solid 3px #dcd0cc;
+    user-select: none;
+}
+
+.about-link:hover {
+    color: white;
+    border-color: white;
+}

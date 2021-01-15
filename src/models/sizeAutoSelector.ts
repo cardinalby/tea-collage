@@ -32,9 +32,13 @@ export function getRecommendedCollageSize(sizes: generatedJson.CollageSizeDef[])
     if (downlink) {
         sizes.forEach(size => {
             const estimatedLoadTimeSec = size.avgImgSize / downlink;
-            const speedScore = estimatedLoadTimeSec < 3
-                ? calcScore(2.5, estimatedLoadTimeSec, 3, 1.5, 0.5) + 2.5
-                : calcScore(6, estimatedLoadTimeSec, 30, 10, 3) - 6;
+            const bestLoadTimeSec = size.avgImgSize / toBytesPerSec(10); // due to chrome fingerprinting protection
+            const speedScore = calcScore(
+                5,
+                estimatedLoadTimeSec,
+                25,
+                Math.max(1.5, bestLoadTimeSec) + 0.1,
+                bestLoadTimeSec);
             addScore(size.name, speedScore);
         });
     }

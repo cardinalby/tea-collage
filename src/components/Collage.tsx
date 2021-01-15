@@ -10,6 +10,9 @@ import {useMouseHoverArea} from "../hooks/useMouseHoverArea";
 import { useHistory } from "react-router-dom";
 import {useStateSafe} from "../hooks/useStateSafe";
 import {CollageSources} from "../models/collageSources";
+import {useDocumentKeyDown} from "../hooks/useDocumentKeyDown";
+import {useTranslation} from "react-i18next";
+import {useDocumentTitle} from "../hooks/useDocumentTitle";
 
 export interface CollageProps {
     layerId?: string
@@ -17,12 +20,20 @@ export interface CollageProps {
 }
 
 function Collage(props: CollageProps) {
+    const {t} = useTranslation();
+    useDocumentTitle(t('document_title.collage'));
     const imagesLoadingHandler = imgLoadingEvents();
     const [containerRef, setContainerRef] = useStateSafe<HTMLDivElement|null>(null);
 
     const history = useHistory();
     const mouseHoverArea = useMouseHoverArea(1000, 1500);
     useOverlayImagesPreloader(props.collageSources, true, mouseHoverArea.preloadGroup || false);
+
+    useDocumentKeyDown(event => {
+        if (event.code === 'Escape') {
+            closeOverlay();
+        }
+    });
 
     function closeOverlay() {
         if (props.layerId) {

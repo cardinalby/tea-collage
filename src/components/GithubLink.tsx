@@ -4,8 +4,7 @@ import React from "react";
 import {useTranslation} from "react-i18next";
 
 export interface GithubLinkProps {
-    url: string,
-    title?: string
+    url: string
 }
 
 export function GithubLink(props: GithubLinkProps) {
@@ -13,7 +12,7 @@ export function GithubLink(props: GithubLinkProps) {
 
     return (
         <div className='github-link' title={t('actions.view_on_github')}>
-            <a href={props.url} title={props.title}>
+            <a href={props.url}>
                 <Icon/>
             </a>
         </div>

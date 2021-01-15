@@ -89,36 +89,30 @@ function OverlayLayer(props: OverlayLayerProps)
     }
 
     return (
-        <div className={'collage-overlay-container'}>
-            <div
-                style={{position: 'absolute', width: '100%', height: '100%'}}
-                onMouseMove={onMouseMove}
-                onClick={onMouseClick}
-                onMouseLeave={onMouseLeave}
-                onMouseEnter={onMouseMove}
-            >
-                <SmoothImage
-                    componentId={props.layerId}
-                    src={props.src}
-                    previewSrc={props.previewSrc}
-                    loadEvents={{
-                        ...loadEvents,
-                        onLoad: onImageLoad
-                    }}
-                    imgProps={{
-                        //className: 'collage-overlay-img',
-                        style: {
-                            left: props.dimensions.left,
-                            top: props.dimensions.top,
-                            width: props.dimensions.width,
-                            height: props.dimensions.height,
-                        },
-                        alt: props.layerId ? t(`teas.${props.layerId}.name`) : '',
-                        onMouseMove,
-                        onClick: onMouseClick
-                    }}
-                />
-            </div>
+        <div className={'collage-overlay-container'}
+             onMouseMove={onMouseMove}
+             onClick={onMouseClick}
+             onMouseLeave={onMouseLeave}
+             onMouseEnter={onMouseMove}
+        >
+            <SmoothImage
+                componentId={props.layerId}
+                src={props.src}
+                previewSrc={props.previewSrc}
+                loadEvents={{
+                    ...loadEvents,
+                    onLoad: onImageLoad
+                }}
+                imgProps={{
+                    style: {
+                        left: props.dimensions.left,
+                        top: props.dimensions.top,
+                        width: props.dimensions.width,
+                        height: props.dimensions.height,
+                    },
+                    alt: props.layerId ? t(`teas.${props.layerId}.name`) : '',
+                }}
+            />
         </div>
     );
 }

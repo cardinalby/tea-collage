@@ -6,6 +6,7 @@ import React from "react";
 import {useTranslation} from "react-i18next";
 import {GithubLink} from "./GithubLink";
 import {useLanguage} from "../hooks/useLanguage";
+import {AboutLink} from "./AboutLink";
 
 export interface ControlPanelProps {
     collageSizeName: string,
@@ -20,6 +21,7 @@ export function ControlPanel(props: ControlPanelProps) {
         <div className="control-panel">
             <LanguageSelector language={currentLang} onChange={changeLanguage}/>
             <div className='control-panel-center'/>
+            <AboutLink/>
             <GithubLink url={'https://github.com/cardinalby/tea-collage'}/>
             <div className='control-panel-center'/>
             <QualitySelector

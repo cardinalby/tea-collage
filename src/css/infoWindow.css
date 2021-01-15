@@ -54,10 +54,6 @@
     padding: 15px 20px 20px 15px;
 }
 
-.info-window .info-container p {
-    margin-top: 40px;
-}
-
 .info-window .info-container .smooth-image {
     box-sizing: border-box;
     position: relative;
@@ -89,11 +85,7 @@
 
     .info-window .title-text {
         font-size: 28px;
-        padding: 0 10px 20px 10px;
-    }
-
-    .info-window .info-container p {
-        margin-top: 25px;
+        padding: 0 10px 20px 15px;
     }
 
     .info-window .info-container .smooth-image {
