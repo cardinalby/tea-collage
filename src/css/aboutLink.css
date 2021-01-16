@@ -13,6 +13,7 @@
     box-sizing: border-box;
     border: solid 3px #dcd0cc;
     user-select: none;
+    margin: 5px;
 }
 
 .about-link:hover {

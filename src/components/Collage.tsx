@@ -17,6 +17,7 @@ import {useDocumentTitle} from "../hooks/useDocumentTitle";
 export interface CollageProps {
     layerId?: string
     collageSources: CollageSources
+    active: boolean
 }
 
 function Collage(props: CollageProps) {
@@ -84,6 +85,7 @@ function Collage(props: CollageProps) {
         <div className="collage-container"
              ref={setContainerRef}
              onClick={onContainerClick}
+             style={props.active ? {} : {display: 'none'}}
         >
             {imageMapper}
         </div>

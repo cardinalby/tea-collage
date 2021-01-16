@@ -38,7 +38,9 @@ export function AppContents(props: AppContentsProps) {
         }
     }
 
-    let areaContent: JSX.Element|undefined = undefined;
+    let infoWindow: JSX.Element|undefined = undefined;
+    let collage: JSX.Element|undefined = undefined;
+
     if (props.section === 'description' && props.itemId) {
         const isAboutInfo = props.itemId === 'about';
         const translatedData = t(
@@ -50,27 +52,28 @@ export function AppContents(props: AppContentsProps) {
                 ? photosSources.getPhotoUrl('about.jpg', preview)
                 : photosSources.getTeaPhotoUrl(props.itemId!!, preview))
 
-            areaContent = (<InfoWindow
+            infoWindow = (<InfoWindow
                 translatedData={translatedData}
                 imgSrc={imgSrc}
                 previewSrc={previewSrc}
                 />);
+            collage = <Collage active={false} collageSources={collageSources}/>
         }
-        else {
-            areaContent = <Redirect to='/collage/'/>
-        }
-    } else if (props.section === 'collage') {
-        if (props.itemId && !collageSources.getOverlayUrl(props.itemId)) {
-            areaContent = <Redirect to='/collage/'/>
-        } else {
-            areaContent = (<Collage layerId={props.itemId} collageSources={collageSources}/>);
-        }
+    } else if (
+        props.section === 'collage' &&
+        (!props.itemId || collageSources.getOverlayUrl(props.itemId))
+    ) {
+        collage = (<Collage active={true} layerId={props.itemId} collageSources={collageSources}/>);
     }
+
+    const mainAreaContents = infoWindow || collage
+        ? <>{infoWindow} {collage}</>
+        : <Redirect to='/collage/'/>
 
     return (
         <div className='app' lang={props.i18n && props.i18n.language}>
             <div className={'main-area'} onClick={onMainAreaClick}>
-                {areaContent}
+                {mainAreaContents}
             </div>
             <ControlPanel collageSizeName={collageSizeName} onCollageSizeChange={setCollageSizeName}/>
         </div>

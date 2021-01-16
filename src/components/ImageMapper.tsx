@@ -220,7 +220,6 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         const width = this.props.width || (this.img && this.img.clientWidth);
         const height = this.props.height || (this.img && this.img.clientHeight);
         if (!width || !height) {
-            console.error("Can't determine canvas size");
             return;
         }
         canvas.width = width;
