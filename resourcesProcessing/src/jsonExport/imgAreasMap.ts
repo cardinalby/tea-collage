@@ -24,6 +24,9 @@ function updateAreaStyle(area: Area, config: ImgAreaConfig) {
     if (config.fillColor) {
         area.fillColor = config.fillColor;
     }
+    if (config.lineWidth) {
+        area.lineWidth = config.lineWidth;
+    }
 }
 
 export function getImgAreas(psdProcessingResult: PsdParsingResult): Area[] {

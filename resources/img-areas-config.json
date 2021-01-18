@@ -46,5 +46,10 @@
   "shu_zoloto_menhaya": {
     "fillColor": "rgba(255, 255, 255, 0.2)",
     "strokeColor": "black"
+  },
+  "about": {
+    "fillColor": "rgba(0, 0, 0, 0)",
+    "strokeColor": "#ffc98b",
+    "lineWidth": 6
   }
 }

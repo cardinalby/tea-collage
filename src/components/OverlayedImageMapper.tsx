@@ -1,3 +1,4 @@
+import '../css/spinner.css';
 import React, {MouseEvent, useRef, useState} from "react";
 import OverlayLayer from "./OverlayLayer";
 import ImageMapper, {
@@ -9,6 +10,7 @@ import {useFittedScale} from "../hooks/useFittedScale";
 import {classNames} from "../models/reactUtils";
 import {withTranslation} from "react-i18next";
 import {CollageSources} from "../models/collageSources";
+import TeapotSpinner from "./TeapotSpinner";
 
 const ImageMapperTranslated = withTranslation()(ImageMapper);
 
@@ -16,6 +18,7 @@ interface OverlayedImageMapperProps extends
     ImageMapperStyleProps,
     ImageMapperBehaviorProps
 {
+    showLoader: boolean,
     collageSources: CollageSources,
     areasMap: ImageMapperMap,
     fitToElement: HTMLElement,
@@ -80,6 +83,7 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
     const overlay = props.overlayLayerId !== undefined && (
         <OverlayLayer
             layerId={props.overlayLayerId}
+            containerClass='collage-overlay-container'
             src={props.collageSources.getOverlayUrl(props.overlayLayerId)}
             previewSrc={props.collageSources.getOverlayUrl(props.overlayLayerId, true)}
             dimensions={props.collageSources.getOverlayDimensions(props.overlayLayerId).scale(scale)}
@@ -112,6 +116,7 @@ function OverlayedImageMapper(props: OverlayedImageMapperProps)
         >
             <ImageMapperTranslated {...imgMapperProps} />
             {overlay}
+            <TeapotSpinner active={props.showLoader} scale={scale} collageSources={props.collageSources}/>
             {props.children}
         </div>
     );

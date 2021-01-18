@@ -3,27 +3,23 @@ import Collage from "./Collage";
 import {InfoWindow, TranslatedData} from "./InfoWindow";
 import {ControlPanel} from "./ControlPanel";
 import React, {SyntheticEvent, useMemo} from "react";
-import {i18n} from "i18next";
 import {useStateSafe} from "../hooks/useStateSafe";
 import collageSourcesSet from "../models/collageSourcesSet";
 import {useWindowAspectRatioClass} from "../hooks/useWindowAspectRatio";
-import {getRecommendedCollageSize} from "../models/sizeAutoSelector";
+import {getRecommendedCollageSize, saveSizePref} from "../models/sizeAutoSelector";
 import {useTranslation} from "react-i18next";
 import {Redirect} from "react-router";
 import photosSources from "../models/photosSources";
 
-const recommendedCollageSize = getRecommendedCollageSize(collageSourcesSet.getSizes());
-
 export interface AppContentsProps {
-    i18n: i18n,
     section: string,
     itemId?: string
 }
 
 export function AppContents(props: AppContentsProps) {
     const history = useHistory();
-    const {t} = useTranslation();
-    const [collageSizeName, setCollageSizeName] = useStateSafe(recommendedCollageSize);
+    const {t, i18n} = useTranslation();
+    const [collageSizeName, setCollageSizeName] = useStateSafe(getRecommendedCollageSize(collageSourcesSet.getSizes()));
     const collageSources = useMemo(() =>
             collageSourcesSet.getSources(collageSizeName),
         [collageSizeName]
@@ -32,6 +28,10 @@ export function AppContents(props: AppContentsProps) {
         'horizontal-control-panel': aspectRatio => aspectRatio < collageSourcesSet.collageAspectRatio
     });
 
+    function onCollageSizeChange(size: string) {
+        setCollageSizeName(saveSizePref(size));
+    }
+
     function onMainAreaClick(event: SyntheticEvent<HTMLDivElement, MouseEvent>) {
         if (event.target === event.currentTarget) {
             history.replace('/collage/');
@@ -39,43 +39,42 @@ export function AppContents(props: AppContentsProps) {
     }
 
     let infoWindow: JSX.Element|undefined = undefined;
-    let collage: JSX.Element|undefined = undefined;
+    let collageLayerId: string|undefined = undefined;
+    let redirect = true;
 
     if (props.section === 'description' && props.itemId) {
-        const isAboutInfo = props.itemId === 'about';
         const translatedData = t(
-                isAboutInfo ? 'about' : `teas.${props.itemId}`,
-                { returnObjects: true, defaultValue: false }
+            `teas.${props.itemId}`,
+            { returnObjects: true, defaultValue: false }
             ) as TranslatedData;
         if (translatedData) {
-            const [imgSrc, previewSrc] = [false, true].map(preview => isAboutInfo
-                ? photosSources.getPhotoUrl('about.jpg', preview)
-                : photosSources.getTeaPhotoUrl(props.itemId!!, preview))
+            const [imgSrc, previewSrc] = [false, true]
+                .map(preview => photosSources.getTeaPhotoUrl(props.itemId!!, preview));
 
             infoWindow = (<InfoWindow
                 translatedData={translatedData}
                 imgSrc={imgSrc}
                 previewSrc={previewSrc}
                 />);
-            collage = <Collage active={false} collageSources={collageSources}/>
+            redirect = false;
         }
-    } else if (
-        props.section === 'collage' &&
-        (!props.itemId || collageSources.getOverlayUrl(props.itemId))
-    ) {
-        collage = (<Collage active={true} layerId={props.itemId} collageSources={collageSources}/>);
+    } else if (props.section === 'collage' && (!props.itemId || collageSources.getOverlayUrl(props.itemId))) {
+        collageLayerId = props.itemId
+        redirect = false;
     }
 
-    const mainAreaContents = infoWindow || collage
-        ? <>{infoWindow} {collage}</>
-        : <Redirect to='/collage/'/>
-
     return (
-        <div className='app' lang={props.i18n && props.i18n.language}>
+        <div className='app' lang={i18n && i18n.language}>
             <div className={'main-area'} onClick={onMainAreaClick}>
-                {mainAreaContents}
+                {redirect && <Redirect to='/collage/'/>}
+                <Collage
+                    active={props.section === 'collage'}
+                    layerId={collageLayerId}
+                    collageSources={collageSources}
+                />
+                {infoWindow}
             </div>
-            <ControlPanel collageSizeName={collageSizeName} onCollageSizeChange={setCollageSizeName}/>
+            <ControlPanel collageSizeName={collageSizeName} onCollageSizeChange={onCollageSizeChange}/>
         </div>
     );
 }

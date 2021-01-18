@@ -28,7 +28,11 @@ function Collage(props: CollageProps) {
 
     const history = useHistory();
     const mouseHoverArea = useMouseHoverArea(1000, 1500);
-    useOverlayImagesPreloader(props.collageSources, true, mouseHoverArea.preloadGroup || false);
+    useOverlayImagesPreloader(
+        props.collageSources,
+        props.active,
+        mouseHoverArea.preloadGroup || false
+    );
 
     useDocumentKeyDown(event => {
         if (event.code === 'Escape') {
@@ -74,12 +78,8 @@ function Collage(props: CollageProps) {
             onMouseEnter={mouseHoverArea.onMouseEnterArea}
             onMouseLeave={mouseHoverArea.onMouseLeaveArea}
             loadEvents={imagesLoadingHandler.eventHandlers}
-        >
-            <TeapotSpinner
-                active={imagesLoadingHandler.isLoading}
-                preview={imagesLoadingHandler.isPreview}
-            />
-        </OverlayedImageMapper>;
+            showLoader={imagesLoadingHandler.isLoading}
+        />
 
     return (
         <div className="collage-container"

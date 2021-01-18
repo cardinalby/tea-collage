@@ -40,7 +40,7 @@
     "eject": "react-scripts eject",
     "build-resources-processing": "tsc --project resourcesProcessing/tsconfig.json",
     "process-resources": "node resourcesProcessing/build/run_processing.js",
-    "update-img-areas-style": "node resourcesProcessing/run_img_areas_update"
+    "update-img-areas-style": "node resourcesProcessing/build/run_img_areas_update.js"
   },
   "eslintConfig": {
     "extends": [

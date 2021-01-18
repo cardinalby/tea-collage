@@ -7,6 +7,7 @@ declare namespace generatedJson {
         coords: number[],
         group: string,
         strokeColor?: string,
-        fillColor?: string
+        fillColor?: string,
+        lineWidth?: number
     }
 }

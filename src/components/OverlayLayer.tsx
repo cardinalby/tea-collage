@@ -12,10 +12,11 @@ type LayerMouseEvent = DivMouseEvent|ImgMouseEvent;
 
 interface OverlayLayerProps {
     layerId?: string,
+    containerClass?: string
     src: string,
-    previewSrc: string,
+    previewSrc?: string,
     dimensions: OverlayDimensions
-    loadEvents: SmoothImageLoadEvents,
+    loadEvents?: SmoothImageLoadEvents,
     onClick?: (event: LayerMouseEvent, isTransparentArea: boolean) => void
     onMouseHover?: (event: LayerMouseEvent, isTransparentArea: boolean) => void
     onMouseLeave?: (event: LayerMouseEvent) => void
@@ -89,7 +90,7 @@ function OverlayLayer(props: OverlayLayerProps)
     }
 
     return (
-        <div className={'collage-overlay-container'}
+        <div className={props.containerClass}
              onMouseMove={onMouseMove}
              onClick={onMouseClick}
              onMouseLeave={onMouseLeave}

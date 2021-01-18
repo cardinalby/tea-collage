@@ -1,29 +1,52 @@
 .teapot-spinner {
-    z-index: 200;
-    top: 50%;
-    left: 50%;
-    transform: translateY(-50%) translateX(-50%);
     position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
     pointer-events: none;
 }
 
-.teapot-spinner.active {
+.teapot-spinner img.smooth-img.preview {
+    z-index: 50;
     opacity: 100%;
-    transition: opacity 0.5s;
 }
 
-.teapot-spinner.hidden {
+.teapot-spinner.active img.smooth-img.preview {
     opacity: 0;
-    transition: opacity 0.3s;
+}
+
+.overlay-shown .teapot-spinner.disabled img.smooth-img.preview {
+    filter: grayscale(0.6) brightness(0.6);
+}
+
+.overlay-shown.overlay-no-hover .teapot-spinner.disabled img.smooth-img.preview {
+    filter: grayscale(0.4) brightness(0.7);
+}
+
+.overlay-shown.overlay-hover-on-transparent .teapot-spinner.disabled img.smooth-img.preview {
+    filter: grayscale(0.3) brightness(0.8);
+}
+
+.teapot-spinner img.smooth-img.full {
+    z-index: 150;
+}
+
+.teapot-spinner.disabled img.smooth-img.full {
+    opacity: 0;
+}
+
+.teapot-spinner.active img.smooth-img.full {
+    opacity: 100%;
 }
 
 .teapot-spinner img {
-    width: 125px;
-    animation: zoom 2s infinite;
+    transform-origin: center;
+    transition: all 1s;
 }
 
-.teapot-spinner.preview img {
-    filter: grayscale(100%) brightness(1.5);;
+.teapot-spinner.active img.smooth-img.full {
+    animation: zoom 1.4s infinite;
 }
 
 @keyframes zoom {
@@ -31,7 +54,7 @@
         transform: scale(1);
     }
     50% {
-        transform: scale(1.5);
+        transform: scale(1.15);
     }
     100% {
         transform: scale(1);

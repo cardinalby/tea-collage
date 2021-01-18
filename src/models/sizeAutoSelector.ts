@@ -1,3 +1,5 @@
+const LOCAL_STORAGE_PREF_KEY = 'collage_size';
+
 function calcScore(factor, actual, worst, zero, best) {
     const isWorseThanTarget = worst > best
         ? actual > zero
@@ -21,6 +23,11 @@ function isUserGoingToZoom(): boolean {
 }
 
 export function getRecommendedCollageSize(sizes: generatedJson.CollageSizeDef[]): string {
+    const savedSizePref = localStorage.getItem(LOCAL_STORAGE_PREF_KEY);
+    if (savedSizePref) {
+        return savedSizePref;
+    }
+
     const sizesScore = new Map<string, number>(sizes.map(size => [size.name, 0]));
     function addScore(name: string, score: number) {
         const currentScore = sizesScore.get(name) || 0;
@@ -63,7 +70,12 @@ export function getRecommendedCollageSize(sizes: generatedJson.CollageSizeDef[])
         addScore(size.name, screenSizeScore);
     });
 
-    return sizes.reduce(function(prev, current) {
+    return saveSizePref(sizes.reduce(function(prev, current) {
         return ((sizesScore.get(prev.name) || 0) > (sizesScore.get(current.name) || 0)) ? prev : current
-    }).name;
+    }).name);
+}
+
+export function saveSizePref(size: string): string {
+    localStorage.setItem(LOCAL_STORAGE_PREF_KEY, size);
+    return size;
 }
