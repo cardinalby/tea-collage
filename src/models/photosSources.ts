@@ -9,6 +9,7 @@ function getDirUrl(preview: boolean): string {
 }
 
 class PhotosSources {
+    // noinspection JSUnusedGlobalSymbols
     public getPhotoUrl(fileName: string, preview: boolean = false): string|undefined {
         if (!photosInfo.files.find(file => file === fileName)) {
             return undefined;

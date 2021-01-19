@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import detector from "i18next-browser-languagedetector";
 import Backend from 'i18next-fetch-backend';
 
+// noinspection JSIgnoredPromiseFromCall
 i18n
     .use(detector)
     .use(Backend)
@@ -20,6 +21,5 @@ i18n
         load: 'languageOnly',
         backend: {
             loadPath: process.env.PUBLIC_URL + '/i18n/{{lng}}.json',
-        },
-        //resources
+        }
     });

@@ -127,7 +127,7 @@ export default class ImageMapper extends Component<ImageMapperProps, ImageMapper
         this.styles.map = props.onClick && { cursor: "pointer" };
     }
 
-    componentDidUpdate(prevProps: Readonly<ImageMapperProps>, prevState: Readonly<ImageMapperState>, snapshot?: any) {
+    componentDidUpdate(prevProps: Readonly<ImageMapperProps>) {
         if ((
             this.props.width !== prevProps.width ||
             this.props.height !== prevProps.height ||
