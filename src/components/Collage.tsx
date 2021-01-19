@@ -3,7 +3,6 @@ import React, {MouseEvent} from "react";
 import OverlayedImageMapper from "./OverlayedImageMapper";
 import collageSourcesSet from "../models/collageSourcesSet";
 import imgLoadingEvents from "../hooks/useImgLoadingEvents";
-import TeapotSpinner from "./TeapotSpinner";
 import {ImageMapperArea} from "./ImageMapper";
 import {useOverlayImagesPreloader} from "../hooks/useOverlayImagesPreloader";
 import {useMouseHoverArea} from "../hooks/useMouseHoverArea";

@@ -3,13 +3,12 @@ import Collage from "./Collage";
 import {InfoWindow, TranslatedData} from "./InfoWindow";
 import {ControlPanel} from "./ControlPanel";
 import React, {SyntheticEvent, useMemo} from "react";
-import {useStateSafe} from "../hooks/useStateSafe";
 import collageSourcesSet from "../models/collageSourcesSet";
 import {useWindowAspectRatioClass} from "../hooks/useWindowAspectRatio";
-import {getRecommendedCollageSize, saveSizePref} from "../models/sizeAutoSelector";
 import {useTranslation} from "react-i18next";
 import {Redirect} from "react-router";
 import photosSources from "../models/photosSources";
+import {useCollageSize} from "../hooks/useCollageSize";
 
 export interface AppContentsProps {
     section: string,
@@ -19,7 +18,7 @@ export interface AppContentsProps {
 export function AppContents(props: AppContentsProps) {
     const history = useHistory();
     const {t, i18n} = useTranslation();
-    const [collageSizeName, setCollageSizeName] = useStateSafe(getRecommendedCollageSize(collageSourcesSet.getSizes()));
+    const [collageSizeName, setCollageSizeName] = useCollageSize();
     const collageSources = useMemo(() =>
             collageSourcesSet.getSources(collageSizeName),
         [collageSizeName]
@@ -27,10 +26,6 @@ export function AppContents(props: AppContentsProps) {
     useWindowAspectRatioClass(document.body, {
         'horizontal-control-panel': aspectRatio => aspectRatio < collageSourcesSet.collageAspectRatio
     });
-
-    function onCollageSizeChange(size: string) {
-        setCollageSizeName(saveSizePref(size));
-    }
 
     function onMainAreaClick(event: SyntheticEvent<HTMLDivElement, MouseEvent>) {
         if (event.target === event.currentTarget) {
@@ -74,7 +69,7 @@ export function AppContents(props: AppContentsProps) {
                 />
                 {infoWindow}
             </div>
-            <ControlPanel collageSizeName={collageSizeName} onCollageSizeChange={onCollageSizeChange}/>
+            <ControlPanel collageSizeName={collageSizeName} onCollageSizeChange={setCollageSizeName}/>
         </div>
     );
 }
