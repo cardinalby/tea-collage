@@ -1,5 +1,5 @@
 import '../css/collage.css';
-import React, {MouseEvent} from "react";
+import React, {MouseEvent, useState} from "react";
 import OverlayedImageMapper from "./OverlayedImageMapper";
 import collageSourcesSet from "../models/collageSourcesSet";
 import imgLoadingEvents from "../hooks/useImgLoadingEvents";
@@ -14,7 +14,6 @@ import {useTranslation} from "react-i18next";
 import {useDocumentTitle} from "../hooks/useDocumentTitle";
 
 export interface CollageProps {
-    layerId?: string
     collageSources: CollageSources
     active: boolean
 }
@@ -24,6 +23,7 @@ function Collage(props: CollageProps) {
     useDocumentTitle(t('document_title.collage'));
     const imagesLoadingHandler = imgLoadingEvents();
     const [containerRef, setContainerRef] = useStateSafe<HTMLDivElement|null>(null);
+    const [layerId, setLayerId] = useState<string|undefined>();
 
     const history = useHistory();
     const mouseHoverArea = useMouseHoverArea(1000, 1500);
@@ -40,8 +40,9 @@ function Collage(props: CollageProps) {
     });
 
     function closeOverlay() {
-        if (props.layerId) {
-            history.replace('/collage/');
+        if (layerId) {
+            setLayerId(undefined);
+            imagesLoadingHandler.eventHandlers.onHidden(layerId);
         }
     }
 
@@ -53,7 +54,7 @@ function Collage(props: CollageProps) {
 
     function onAreaClick(area: ImageMapperArea) {
         if (area.group) {
-            history.replace(`/collage/${area.group}`);
+            setLayerId(area.group);
         }
     }
 
@@ -69,7 +70,7 @@ function Collage(props: CollageProps) {
         <OverlayedImageMapper
             collageSources={props.collageSources}
             areasMap={collageSourcesSet.getAreasMap()}
-            overlayLayerId={props.layerId}
+            overlayLayerId={layerId}
             fitToElement={containerRef}
             lineWidth={3}
             onClick={onAreaClick}

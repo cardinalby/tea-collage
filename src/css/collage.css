@@ -9,7 +9,7 @@
 }
 
 .collage-bg {
-    transition: filter 0.5s;
+    transition: filter 0.3s;
 }
 
 .overlay-shown .collage-bg {

@@ -34,7 +34,6 @@ export function AppContents(props: AppContentsProps) {
     }
 
     let infoWindow: JSX.Element|undefined = undefined;
-    let collageLayerId: string|undefined = undefined;
     let redirect = true;
 
     if (props.section === 'description' && props.itemId) {
@@ -53,8 +52,7 @@ export function AppContents(props: AppContentsProps) {
                 />);
             redirect = false;
         }
-    } else if (props.section === 'collage' && (!props.itemId || collageSources.getOverlayUrl(props.itemId))) {
-        collageLayerId = props.itemId
+    } else if (props.section === 'collage' && !props.itemId) {
         redirect = false;
     }
 
@@ -64,7 +62,6 @@ export function AppContents(props: AppContentsProps) {
                 {redirect && <Redirect to='/collage/'/>}
                 <Collage
                     active={props.section === 'collage'}
-                    layerId={collageLayerId}
                     collageSources={collageSources}
                 />
                 {infoWindow}

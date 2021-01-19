@@ -1,13 +1,14 @@
 import {useState} from "react";
 
 export interface ImgProEventHandlers {
-    onLoad;
-    onLoading;
-    onError;
+    onLoad: (target, preview, component) => void;
+    onLoading: (target, preview, component) => void;
+    onError: (target, preview, component) => void;
+    onHidden: (component) => void;
 }
 
 export interface ImgProLoadingEvents {
-    eventHandlers: ImgProEventHandlers,
+    eventHandlers: ImgProEventHandlers;
     isLoading: boolean;
     isPreview: boolean;
 }
@@ -46,6 +47,10 @@ export default function useImgLoadingEvents(): ImgProLoadingEvents {
             onLoading: (target, preview, component) => addLoading(component, preview),
             onError: (target, preview, component) => {
                 deleteLoading(component, preview);
+            },
+            onHidden: component => {
+                deleteLoading(component, false);
+                deleteLoading(component, true);
             }
             },
         isLoading: loadingFull.size > 0 || loadingPreview.size > 0,

@@ -42,7 +42,7 @@
 
 .teapot-spinner img {
     transform-origin: center;
-    transition: all 1s;
+    transition: opacity 1s, filter 0.3s;
 }
 
 .teapot-spinner.active img.smooth-img.full {
