@@ -4,6 +4,8 @@
 
 ## Teas Collage
 
+[Go to Github Pages](https://cardinalby.github.io/tea-collage)
+
 This project is a digital interactive addition to a collage of Chinese tea wrappers that I have been 
 drinking for the past three years.
 
