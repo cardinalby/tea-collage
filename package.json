@@ -1,7 +1,8 @@
 {
   "name": "tea-collage",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "homepage": "/tea-collage",
   "dependencies": {
     "memoize-one": "^5.1.1",
     "react": "^17.0.1",
