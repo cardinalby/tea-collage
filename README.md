@@ -15,11 +15,18 @@ At the same time, this site is my learning project, where I decided to refresh m
 
 ### Resource extracting
 
-Source of background collage photo and wrappers overlays are located in `resources/teas.psd` under 
-the version control. To extract layers images and meta information required for React App run:
+Source of background collage photo, wrappers overlays and paths for background areas are located in 
+`resources/teas.psd` under the version control. 
+To extract layers images and meta information required for React App run:
 
 `npm run build-resources-processing`\
 `npm run process-resources` 
+
+Useful development scripts are:
+
+* `npm run check-resources` quickly checks PSD file and saves json files requered to build React app 
+without extracting and resizing actual images
+* `npm run update-img-areas-style` quickly updates only `src/areas-map.json` stroke and fill styles.
 
 ### Build react app
 
