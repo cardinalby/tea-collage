@@ -9,6 +9,7 @@ import {useTranslation} from "react-i18next";
 import {Redirect} from "react-router";
 import photosSources from "../models/photosSources";
 import {useCollageSize} from "../hooks/useCollageSize";
+import {useHtmlElementLang} from "../hooks/useHtmlElementLang";
 
 export interface AppContentsProps {
     section: string,
@@ -18,6 +19,7 @@ export interface AppContentsProps {
 export function AppContents(props: AppContentsProps) {
     const history = useHistory();
     const {t, i18n} = useTranslation();
+    useHtmlElementLang(i18n.language);
     const [collageSizeName, setCollageSizeName] = useCollageSize();
     const collageSources = useMemo(() =>
             collageSourcesSet.getSources(collageSizeName),
@@ -57,7 +59,7 @@ export function AppContents(props: AppContentsProps) {
     }
 
     return (
-        <div className='app' lang={i18n && i18n.language}>
+        <div className='app'>
             <div className={'main-area'} onClick={onMainAreaClick}>
                 {redirect && <Redirect to='/collage/'/>}
                 <Collage

@@ -12,6 +12,7 @@ import {CollageSources} from "../models/collageSources";
 import {useDocumentKeyDown} from "../hooks/useDocumentKeyDown";
 import {useTranslation} from "react-i18next";
 import {useDocumentTitle} from "../hooks/useDocumentTitle";
+import {HitsCounter} from "./HitsCounter";
 
 export interface CollageProps {
     collageSources: CollageSources
@@ -88,6 +89,7 @@ function Collage(props: CollageProps) {
              style={props.active ? {} : {display: 'none'}}
         >
             {imageMapper}
+            <HitsCounter visible={layerId === 'about'}/>
         </div>
     );
 }

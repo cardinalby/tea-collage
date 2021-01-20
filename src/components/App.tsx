@@ -6,7 +6,6 @@ import {HashRouter, Route} from 'react-router-dom'
 import {RouteComponentProps, Redirect} from "react-router";
 import {withTranslation} from "react-i18next";
 import {AppContents} from "./AppContents";
-import {useHitsCounter} from "../hooks/useHitsCounter";
 
 type RoutesProps = [RouteComponentProps<any>];
 
@@ -30,8 +29,6 @@ function App() {
             </React.Suspense>
         );
     }
-
-    useHitsCounter();
 
     return (
         <HashRouter>

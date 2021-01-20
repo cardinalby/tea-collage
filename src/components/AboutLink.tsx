@@ -10,7 +10,7 @@ export function AboutLink() {
     return (
         <div
             className='about-link'
-            title={t('about.name')}
+            title={t('teas.about.name')}
             onClick={() => history.push('/description/about')}
         >
             ?

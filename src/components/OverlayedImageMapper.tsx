@@ -34,7 +34,7 @@ const selfPropNames = new Set([
     'overlayLayerId',
     'onOverlayLeave',
     'onOverlayClick',
-    'children?',
+    'children',
 ]);
 
 function getImageMapperProps(

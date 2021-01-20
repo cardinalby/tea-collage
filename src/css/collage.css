@@ -23,3 +23,9 @@
 .overlay-shown.overlay-hover-on-transparent .collage-bg {
     filter: grayscale(0.3) brightness(0.8);
 }
+
+.hits-counter {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}
