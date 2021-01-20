@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/tea-collage/static/css/main.a39d04fc.chunk.css",
-    "main.js": "/tea-collage/static/js/main.59d47888.chunk.js",
-    "main.js.map": "/tea-collage/static/js/main.59d47888.chunk.js.map",
+    "main.css": "/tea-collage/static/css/main.5ed34973.chunk.css",
+    "main.js": "/tea-collage/static/js/main.3872ae80.chunk.js",
+    "main.js.map": "/tea-collage/static/js/main.3872ae80.chunk.js.map",
     "runtime-main.js": "/tea-collage/static/js/runtime-main.0ba02242.js",
     "runtime-main.js.map": "/tea-collage/static/js/runtime-main.0ba02242.js.map",
     "static/js/2.ab417809.chunk.js": "/tea-collage/static/js/2.ab417809.chunk.js",
     "static/js/2.ab417809.chunk.js.map": "/tea-collage/static/js/2.ab417809.chunk.js.map",
     "index.html": "/tea-collage/index.html",
-    "static/css/main.a39d04fc.chunk.css.map": "/tea-collage/static/css/main.a39d04fc.chunk.css.map",
+    "static/css/main.5ed34973.chunk.css.map": "/tea-collage/static/css/main.5ed34973.chunk.css.map",
     "static/js/2.ab417809.chunk.js.LICENSE.txt": "/tea-collage/static/js/2.ab417809.chunk.js.LICENSE.txt",
     "static/media/close_icon.283a412d.svg": "/tea-collage/static/media/close_icon.283a412d.svg",
     "static/media/full_screen.bc228e95.svg": "/tea-collage/static/media/full_screen.bc228e95.svg",
@@ -19,7 +19,7 @@
   "entrypoints": [
     "static/js/runtime-main.0ba02242.js",
     "static/js/2.ab417809.chunk.js",
-    "static/css/main.a39d04fc.chunk.css",
-    "static/js/main.59d47888.chunk.js"
+    "static/css/main.5ed34973.chunk.css",
+    "static/js/main.3872ae80.chunk.js"
   ]
 }
