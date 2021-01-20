@@ -79,12 +79,12 @@
     .info-window .info-container {
         padding: 0 15px 0 15px;
         flex-basis: 100%;
-        line-height: 31px;
-        font-size: 21px;
+        line-height: 28px;
+        font-size: 18px;
     }
 
     .info-window .title-text {
-        font-size: 28px;
+        font-size: 25px;
         padding: 10px 10px 20px 15px;
     }
 
@@ -92,6 +92,5 @@
         width: 100%;
         margin: auto auto;
         min-width: initial;
-        max-height: 80%;
     }
 }
