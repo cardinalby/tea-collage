@@ -4,8 +4,13 @@ import CollageOverlayPreviewItem = generatedJson.CollageOverlayPreviewItem;
 import CollageBackgroundInfo = generatedJson.CollageBackgroundInfo;
 import CollageFullInfo = generatedJson.CollageFullInfo;
 
-function getOverlayFullItems(psdResult: PsdParsingResult): {[name: string]: CollageOverlayItem} {
-    return Object.fromEntries(psdResult.overlayLayers.map(layer =>
+function getOverlayFullItems(
+    psdResult: PsdParsingResult,
+    excludeLayers: string[]
+): {[name: string]: CollageOverlayItem}
+{
+    const layers = psdResult.overlayLayers.filter(layer => excludeLayers.indexOf(layer.name) === -1);
+    return Object.fromEntries(layers.map(layer =>
         [
             layer.name,
             {
@@ -19,13 +24,20 @@ function getOverlayFullItems(psdResult: PsdParsingResult): {[name: string]: Coll
     ));
 }
 
-function getOverlayPreviewItems(psdResult: PsdParsingResult): {[name: string]: CollageOverlayPreviewItem} {
-    return Object.fromEntries(psdResult.overlayLayers.map(layer =>
-        [
-            layer.name,
-            { fileName: layer.fileName } as CollageOverlayPreviewItem
-        ]
-    ));
+function getOverlayPreviewItems(
+    psdResult: PsdParsingResult,
+    excludeLayers: string[]
+): {[name: string]: CollageOverlayPreviewItem}
+{
+    const layers = psdResult.overlayLayers.filter(layer => excludeLayers.indexOf(layer.name) === -1);
+
+    return Object.fromEntries(layers.map(layer =>
+            [
+                layer.name,
+                { fileName: layer.fileName } as CollageOverlayPreviewItem
+            ]
+        )
+    );
 }
 
 function createBackgroundInfo(psdResult: PsdParsingResult): CollageBackgroundInfo {
@@ -36,16 +48,16 @@ function createBackgroundInfo(psdResult: PsdParsingResult): CollageBackgroundInf
     };
 }
 
-export function createFullCollageInfo(psdResult: PsdParsingResult): CollageFullInfo {
+export function createFullCollageInfo(psdResult: PsdParsingResult, excludeLayers: string[]): CollageFullInfo {
     return {
-        overlayItems: getOverlayFullItems(psdResult),
+        overlayItems: getOverlayFullItems(psdResult, excludeLayers),
         background: createBackgroundInfo(psdResult)
     };
 }
 
-export function createPreviewCollageInfo(psdResult: PsdParsingResult): CollageFullInfo {
+export function createPreviewCollageInfo(psdResult: PsdParsingResult, excludeLayers: string[]): CollageFullInfo {
     return {
-        overlayItems: getOverlayPreviewItems(psdResult),
+        overlayItems: getOverlayPreviewItems(psdResult, excludeLayers),
         background: createBackgroundInfo(psdResult)
     };
 }

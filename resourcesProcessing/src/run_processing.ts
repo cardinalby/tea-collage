@@ -125,8 +125,8 @@ async function processPhotos(psdResult: PsdParsingResult) {
         process.stdout.write(`Preparing ${collageInfoFile}...`);
 
         const collage = size.preview
-            ? createPreviewCollageInfo(psdResultCopy)
-            : createFullCollageInfo(psdResultCopy);
+            ? createPreviewCollageInfo(psdResultCopy, size.excludeLayers || [])
+            : createFullCollageInfo(psdResultCopy, size.excludeLayers || []);
 
         await fs.writeJson(collageInfoFile, collage);
         process.stdout.write('done' + os.EOL);
