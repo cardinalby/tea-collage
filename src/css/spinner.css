@@ -9,7 +9,7 @@
 
 .teapot-spinner img.smooth-img.preview {
     z-index: 50;
-    opacity: 100%;
+    opacity: 1;
 }
 
 .teapot-spinner.active img.smooth-img.preview {
@@ -37,7 +37,7 @@
 }
 
 .teapot-spinner.active img.smooth-img.full {
-    opacity: 100%;
+    opacity: 1;
 }
 
 .teapot-spinner img {
