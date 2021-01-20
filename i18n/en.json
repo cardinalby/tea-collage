@@ -133,7 +133,8 @@
     "enter_fullscreen": "Full screen",
     "exit_fullscreen": "Exit full screen",
     "select_picture_quality": "Select picture quality",
-    "view_on_github": "View on GitHub"
+    "view_on_github": "View on GitHub",
+    "visitors_stats": "Visitors stats"
   },
   "document_title": {
     "collage": "Teas Collage",

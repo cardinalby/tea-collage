@@ -133,7 +133,8 @@
     "enter_fullscreen": "Полноэкранный режим",
     "exit_fullscreen": "Выйти из полноэкранного режима",
     "select_picture_quality": "Выбрать качество картинки",
-    "view_on_github": "Открыть на GitHub"
+    "view_on_github": "Открыть на GitHub",
+    "visitors_stats": "Статистика посещений"
   },
   "document_title": {
     "collage": "Чайный коллаж",
