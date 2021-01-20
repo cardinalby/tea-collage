@@ -4,11 +4,18 @@ const os = require('os');
 const workerThreads = require('node-worker-threads-pool');
 
 export async function extractFromGroup(
-    group: any, extractionDir: string, groupDir: string, psdFilePath: string
+    group: any,
+    extractionDir: string,
+    groupDir: string,
+    psdFilePath: string,
+    checkOnly: boolean,
 ): Promise<OverlayLayerInfo[]>
 {
     const layers = group.children().filter(layer => layer.type === 'layer');
     checkNamesAreUnique(layers);
+    if (checkOnly) {
+        return [];
+    }
 
     console.log(`Extracting overlay layers in ${os.cpus().length} threads...`);
     const staticPool = new workerThreads.StaticPool({

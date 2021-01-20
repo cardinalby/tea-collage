@@ -34,7 +34,8 @@ export async function processPsd(
     extractionDir: string,
     overlayGroupName: string,
     areasGroupName: string,
-    backgroundLayerName: string
+    backgroundLayerName: string,
+    checkOnly: boolean,
 ): Promise<PsdParsingResult>
 {
     const psd = PSD.fromFile(psdFilePath);
@@ -56,15 +57,19 @@ export async function processPsd(
 
     const outBackgroundFileName = sanitizeFilename(backgroundLayer.name) + '.png';
     const outBackgroundFilePath = path.join(extractionDir, outBackgroundFileName);
-
-    process.stdout.write(`Extracting ${backgroundLayerName} layer to ${outBackgroundFilePath}...`);
-    await backgroundLayer.layer.image.saveAsPng(outBackgroundFilePath);
-    process.stdout.write('done' + os.EOL);
+    if (!checkOnly) {
+        process.stdout.write(`Extracting ${backgroundLayerName} layer to ${outBackgroundFilePath}...`);
+        await backgroundLayer.layer.image.saveAsPng(outBackgroundFilePath);
+        process.stdout.write('done' + os.EOL);
+    }
 
     const overlayGroupDir = sanitizeFilename(overlayGroup.name);
-    await fs.ensureDir(path.join(extractionDir, overlayGroupDir));
+    if (!checkOnly) {
+        await fs.ensureDir(path.join(extractionDir, overlayGroupDir));
+    }
+
     const overlayLayers = await extractFromGroup(
-        overlayGroup, extractionDir, overlayGroupDir, psdFilePath
+        overlayGroup, extractionDir, overlayGroupDir, psdFilePath, checkOnly
     );
 
     return {

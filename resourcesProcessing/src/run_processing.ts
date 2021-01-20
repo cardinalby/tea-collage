@@ -13,6 +13,8 @@ const os = require('os');
 const path = require('path')
 const processingConfig = require('../../resources/processing-config.json');
 
+console.log(process.argv);
+
 async function emptyDir(dirPath: string): Promise<void> {
     await fs.ensureDir(dirPath);
     await fs.emptyDir(dirPath);
@@ -76,10 +78,10 @@ async function resizeOverlays(
     await Promise.all(overlaysResizing);
 }
 
-async function processPhotos(psdResult: PsdParsingResult) {
+async function processPhotos(psdResult: PsdParsingResult, skipImagesSaving: boolean) {
     const photosPreviewDir = path.join(consts.PHOTOS_DIR, consts.PHOTOS_PREVIEW_DIR);
     await emptyDir(photosPreviewDir);
-    const photoFiles = await makePhotosPreviews(consts.PHOTOS_DIR, photosPreviewDir);
+    const photoFiles = await makePhotosPreviews(consts.PHOTOS_DIR, photosPreviewDir, skipImagesSaving);
     const photosInfoFilePath = path.join(consts.COLLAGE_INFO_DIR, consts.PHOTOS_INFO_JSON);
     process.stdout.write(`Preparing ${photosInfoFilePath}...`);
     const photosInfo = createPhotosInfo(
@@ -91,35 +93,40 @@ async function processPhotos(psdResult: PsdParsingResult) {
     process.stdout.write('done' + os.EOL);
 }
 
-(async function() {
+async function run_processing(skipImagesSaving: boolean) {
     await emptyDir(consts.EXTRACTED_DIR);
     const psdResult = await processPsd(
         path.join(consts.RESOURCES_DIR, processingConfig.psdFile),
         consts.EXTRACTED_DIR,
         processingConfig.layers.overlayGroup,
         processingConfig.layers.areasGroup,
-        processingConfig.layers.background
+        processingConfig.layers.background,
+        skipImagesSaving
     );
 
-    await fs.ensureDir(consts.COLLAGE_INFO_DIR);
-    await fs.emptyDir(consts.COLLAGE_INFO_DIR);
+    await emptyDir(consts.COLLAGE_INFO_DIR);
 
     await saveImgAreas(psdResult);
 
-    await emptyDir(consts.RESIZED_DIR);
+    if (!skipImagesSaving) {
+        await emptyDir(consts.RESIZED_DIR);
+    }
 
     for (const size of processingConfig.targetSizes) {
-        await emptyDir(path.join(consts.RESIZED_DIR, size.name));
-        const scale = size.width ? (size.width / psdResult.width) : (size.height / psdResult.height);
 
+        const scale = size.width ? (size.width / psdResult.width) : (size.height / psdResult.height);
         const destDir = path.join(consts.RESIZED_DIR, size.name);
+        if (!skipImagesSaving) {
+            await emptyDir(path.join(consts.RESIZED_DIR, size.name));
+        }
 
         const psdResultCopy = copyPsdParsingResult(psdResult);
         adjustPsdResult(psdResultCopy, scale);
 
-        await saveResizedBackground(psdResult, psdResultCopy, size.preview, destDir);
-
-        await resizeOverlays(destDir, psdResultCopy, psdResult, scale, size);
+        if (!skipImagesSaving) {
+            await saveResizedBackground(psdResult, psdResultCopy, size.preview, destDir);
+            await resizeOverlays(destDir, psdResultCopy, psdResult, scale, size);
+        }
 
         const collageInfoFile = path.join(consts.COLLAGE_INFO_DIR, size.name + '.json');
         process.stdout.write(`Preparing ${collageInfoFile}...`);
@@ -131,9 +138,15 @@ async function processPhotos(psdResult: PsdParsingResult) {
         await fs.writeJson(collageInfoFile, collage);
         process.stdout.write('done' + os.EOL);
     }
-    await fs.remove(consts.EXTRACTED_DIR);
-    await saveSizes(psdResult);
+    if (!skipImagesSaving) {
+        await fs.remove(consts.EXTRACTED_DIR);
+    }
+    await saveSizes(psdResult, skipImagesSaving);
 
-    await processPhotos(psdResult);
-})();
+    await processPhotos(psdResult, skipImagesSaving);
+}
+
+const skipImagesSaving = process.argv.length > 2 && process.argv[2] === '--skip-images-saving';
+run_processing(skipImagesSaving)
+    .then(() => console.log('Finished'));
 

@@ -1,0 +1,27 @@
+name: Build check
+
+on: [push, pull_request]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm install
+      - name: Build resources processing scripts
+        run: npm run build-resources-processing
+      - name: Check PSD file
+        run: npm run check-resources
+      - name: Build React app
+        run: npm run build
