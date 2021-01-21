@@ -137,7 +137,7 @@
     "visitors_stats": "Visitors stats"
   },
   "document_title": {
-    "collage": "Teas Collage",
-    "item_description": "Teas Collage: {{item}}"
+    "collage": "Tea Collage",
+    "item_description": "Tea Collage: {{item}}"
   }
 }
