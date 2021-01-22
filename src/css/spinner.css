@@ -40,7 +40,7 @@
     opacity: 1;
 }
 
-.teapot-spinner img {
+.teapot-spinner img.smooth-img {
     transform-origin: center;
     transition: opacity 1s, filter 0.3s;
 }
