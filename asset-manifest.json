@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/tea-collage/static/css/main.db68e6a0.chunk.css",
+    "main.css": "/tea-collage/static/css/main.28263b9c.chunk.css",
     "main.js": "/tea-collage/static/js/main.b037b1a2.chunk.js",
     "main.js.map": "/tea-collage/static/js/main.b037b1a2.chunk.js.map",
     "runtime-main.js": "/tea-collage/static/js/runtime-main.0ba02242.js",
@@ -8,7 +8,7 @@
     "static/js/2.ab417809.chunk.js": "/tea-collage/static/js/2.ab417809.chunk.js",
     "static/js/2.ab417809.chunk.js.map": "/tea-collage/static/js/2.ab417809.chunk.js.map",
     "index.html": "/tea-collage/index.html",
-    "static/css/main.db68e6a0.chunk.css.map": "/tea-collage/static/css/main.db68e6a0.chunk.css.map",
+    "static/css/main.28263b9c.chunk.css.map": "/tea-collage/static/css/main.28263b9c.chunk.css.map",
     "static/js/2.ab417809.chunk.js.LICENSE.txt": "/tea-collage/static/js/2.ab417809.chunk.js.LICENSE.txt",
     "static/media/close_icon.283a412d.svg": "/tea-collage/static/media/close_icon.283a412d.svg",
     "static/media/full_screen.bc228e95.svg": "/tea-collage/static/media/full_screen.bc228e95.svg",
@@ -19,7 +19,7 @@
   "entrypoints": [
     "static/js/runtime-main.0ba02242.js",
     "static/js/2.ab417809.chunk.js",
-    "static/css/main.db68e6a0.chunk.css",
+    "static/css/main.28263b9c.chunk.css",
     "static/js/main.b037b1a2.chunk.js"
   ]
 }
