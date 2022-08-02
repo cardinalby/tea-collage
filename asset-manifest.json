@@ -1,25 +1,18 @@
 {
   "files": {
-    "main.css": "/tea-collage/static/css/main.28263b9c.chunk.css",
-    "main.js": "/tea-collage/static/js/main.b037b1a2.chunk.js",
-    "main.js.map": "/tea-collage/static/js/main.b037b1a2.chunk.js.map",
-    "runtime-main.js": "/tea-collage/static/js/runtime-main.0ba02242.js",
-    "runtime-main.js.map": "/tea-collage/static/js/runtime-main.0ba02242.js.map",
-    "static/js/2.ab417809.chunk.js": "/tea-collage/static/js/2.ab417809.chunk.js",
-    "static/js/2.ab417809.chunk.js.map": "/tea-collage/static/js/2.ab417809.chunk.js.map",
+    "main.css": "/tea-collage/static/css/main.6ec673bd.css",
+    "main.js": "/tea-collage/static/js/main.7d9f6b77.js",
+    "static/media/quality_gear.svg": "/tea-collage/static/media/quality_gear.bdc11cc20995a8cb30e94ff0f57487e0.svg",
+    "static/media/github_logo.svg": "/tea-collage/static/media/github_logo.b0156332b5bd758ca33b6bf219e4da17.svg",
     "index.html": "/tea-collage/index.html",
-    "static/css/main.28263b9c.chunk.css.map": "/tea-collage/static/css/main.28263b9c.chunk.css.map",
-    "static/js/2.ab417809.chunk.js.LICENSE.txt": "/tea-collage/static/js/2.ab417809.chunk.js.LICENSE.txt",
-    "static/media/close_icon.283a412d.svg": "/tea-collage/static/media/close_icon.283a412d.svg",
-    "static/media/full_screen.bc228e95.svg": "/tea-collage/static/media/full_screen.bc228e95.svg",
-    "static/media/full_screen_exit.b88f3e96.svg": "/tea-collage/static/media/full_screen_exit.b88f3e96.svg",
-    "static/media/github_logo.b0156332.svg": "/tea-collage/static/media/github_logo.b0156332.svg",
-    "static/media/quality_gear.bdc11cc2.svg": "/tea-collage/static/media/quality_gear.bdc11cc2.svg"
+    "static/media/full_screen_exit.svg": "/tea-collage/static/media/full_screen_exit.b88f3e960df65cabc8b1885ede5a38d8.svg",
+    "static/media/close_icon.svg": "/tea-collage/static/media/close_icon.283a412d4d074b4bf920d0dd076bc20d.svg",
+    "static/media/full_screen.svg": "/tea-collage/static/media/full_screen.bc228e95e3eb129caf7c442818f87300.svg",
+    "main.6ec673bd.css.map": "/tea-collage/static/css/main.6ec673bd.css.map",
+    "main.7d9f6b77.js.map": "/tea-collage/static/js/main.7d9f6b77.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.0ba02242.js",
-    "static/js/2.ab417809.chunk.js",
-    "static/css/main.28263b9c.chunk.css",
-    "static/js/main.b037b1a2.chunk.js"
+    "static/css/main.6ec673bd.css",
+    "static/js/main.7d9f6b77.js"
   ]
 }
